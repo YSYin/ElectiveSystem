@@ -1,0 +1,92 @@
+            <!-- 右侧内容框架，更改从这里开始 -->
+            <xblock>
+                <button class="layui-btn" onclick="search()" lay-filter="sreach">
+                    <i class="layui-icon">&#xe615;</i>查找课程
+                </button>
+                <div class="layui-input-inline">
+                    <input type="text" name="username"  placeholder="请输入课程编号或名称" autocomplete="off" class="layui-input" id="search_text">
+                </div>
+                <span class="x-right" style="line-height:40px">共有数据：<strong id="data_num">{$data_num}</strong>&nbsp;&nbsp;条&nbsp;&nbsp;</span>
+            </xblock>
+            <table class="layui-table" id="tablelist">
+                <thead align="center">
+                    <tr>
+                        <th>
+                            课程号
+                        </th>
+                        <th>
+                            课程名
+                        </th>
+                        <th>
+                            课程学分
+                        </th>
+                        <th>
+                            限选人数
+                        </th>
+                        <th>
+                            已选人数
+                        </th>
+                        <th>
+                            授课教师
+                        </th>
+                        <th>
+                            课程状态
+                        </th>
+                        <th>
+                            操作
+                        </th>
+                    </tr>
+                </thead>
+                <tbody align="center">
+                    {volist name="list" id="vo"}
+                    <tr>
+                        <td>{$vo.course_code}</td>
+                        <td>{$vo.course_name}</td>
+                        <td>{$vo.course_credit}</td>
+                        <td>{$vo.course_capacity}</td>
+                        <td>{$vo.course_student_num}</td>
+                        <td>{$vo.real_name}</td>
+                        {if ($vo.course_status==1)}
+                        <td class="td-status">
+                            <span class="layui-btn layui-btn-normal layui-btn-mini">
+                                已激活
+                            </span>
+                        </td>
+                        {else /}
+                        <td class="td-status">
+                            <span class="layui-btn layui-btn-disabled layui-btn-mini">
+                                已冻结
+                            </span>
+                        </td>
+                        {/if}
+                        <td class="td-manage">
+                            <a href="javascript:;" onclick="member_edit('查看信息','./showCourseInfo?course_code={$vo.course_code}','','625')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">查看课程信息</span>
+                            </a>
+                            <a href="javascript:;" onclick="member_edit('查看选课学生','./showCourseStudent?course_id={$vo.course_id}','','625')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">查看选课学生</span>
+                            </a>
+                            <a href="javascript:;" onclick="member_edit('修改信息','./editCourseInfo?course_code={$vo.course_code}','','625')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">修改课程信息</span>
+                            </a>
+                            <a href="javascript:;" onclick="member_edit('修改授课教师','./changeCourseTeacher?course_id={$vo.course_id}&real_name={$vo.real_name}','','625')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">修改授课教师</span>
+                            </a>
+                            {if ($vo.course_status==1)}
+                            <a href="javascript:;" onclick="member_stop(this,'course_code={$vo.course_code}', 'course', '课程《{$vo.course_name}》')">
+                                <span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">冻结课程</span>
+                            </a>
+                            {else /}
+                            <a href="javascript:;" onclick="member_start(this,'course_code={$vo.course_code}', 'course', '课程《{$vo.course_name}》')">
+                                <span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">激活课程</span>
+                            </a>
+                            {/if}
+                            <a href="javascript:;" onclick="member_del(this,'./deleteCourse?course_id={$vo.course_id}', '课程《{$vo.course_name}》')">
+                                <span class="layui-btn layui-btn-small layui-btn-danger layui-btn-radius">删除课程</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {/volist} 
+                </tbody>
+            </table>
+            <!-- 右侧内容框架，更改从这里结束 -->

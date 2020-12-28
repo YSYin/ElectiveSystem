@@ -1,0 +1,92 @@
+            <!-- 右侧内容框架，更改从这里开始 -->
+            <xblock>
+                <button class="layui-btn" onclick="member_add('添加教师','./addUser','600','500')">
+                    <i class="layui-icon">&#xe608;</i>添加教师
+                </button>
+                <button class="layui-btn" onclick="search()" lay-filter="sreach">
+                    <i class="layui-icon">&#xe615;</i>查找教师
+                </button>
+                <div class="layui-input-inline">
+                    <input type="text" name="username"  placeholder="请输入教师账号或姓名" autocomplete="off" class="layui-input" id="search_text">
+                </div>
+                <span class="x-right" style="line-height:40px">共有数据：<strong id="data_num">{$data_num}</strong>&nbsp;&nbsp;条&nbsp;&nbsp;</span>
+            </xblock>
+            <table class="layui-table" id="tablelist">
+                <thead align="center">
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            账号
+                        </th>
+                        <th>
+                            姓名
+                        </th>
+                        <th>
+                            性别
+                        </th>
+                        <th>
+                            电子邮箱
+                        </th>
+                        <th>
+                            手机号码
+                        </th>
+                        <th>
+                            教师状态
+                        </th>
+                        <th>
+                            操作
+                        </th>
+                    </tr>
+                </thead>
+                <tbody align="center">
+                    {volist name="list" id="vo"}
+                    <tr>
+                        <td>{$vo.user_id}</td>
+                        <td>{$vo.user_name}</td>
+                        <td>{$vo.real_name}</td>
+                        <td>{$vo.gender==1 ? '男' : '女'}</td>
+                        <td>{$vo.email}</td>
+                        <td>{$vo.mobile_number}</td>
+                        {if ($vo.status==1)}
+                        <td class="td-status">
+                            <span class="layui-btn layui-btn-normal layui-btn-mini">
+                                已激活
+                            </span>
+                        </td>
+                        {else /}
+                        <td class="td-status">
+                            <span class="layui-btn layui-btn-disabled layui-btn-mini">
+                                已冻结
+                            </span>
+                        </td>
+                        {/if}
+                        <td class="td-manage">
+                            <a href="javascript:;" onclick="member_edit('修改信息','./editUserInfo?user_name={$vo.user_name}','','510')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">修改信息</span>
+                            </a>
+                            <a href="javascript:;" onclick="member_edit('重置密码','./resetUserPassword?user_name={$vo.user_name}&real_name={$vo.real_name}','','510')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">重置密码</span>
+                            </a>
+                            <a href="javascript:;" onclick="member_reset(this,'./resetUserToken?user_name={$vo.user_name}', '教师：{$vo.real_name}')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">重置token</span>
+                            </a>
+                            {if ($vo.status==1)}
+                            <a href="javascript:;" onclick="member_stop(this,'user_name={$vo.user_name}', 'teacher','教师：{$vo.real_name}')">
+                                <span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">冻结教师</span>
+                            </a>
+                            {else /}
+                            <a href="javascript:;" onclick="member_start(this,'user_name={$vo.user_name}', 'teacher','教师：{$vo.real_name}')">
+                                <span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">激活教师</span>
+                            </a>
+                            {/if}
+                            <a href="javascript:;" onclick="member_del(this,'./deleteUser?user_id={$vo.user_id}', '教师：{$vo.real_name}')">
+                                <span class="layui-btn layui-btn-small layui-btn-danger layui-btn-radius">删除教师</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {/volist} 
+                </tbody>
+            </table>
+            <!-- 右侧内容框架，更改从这里结束 -->

@@ -1,0 +1,79 @@
+
+            <!-- 右侧内容框架，更改从这里开始 -->
+            <form class="layui-form" action="" method="post">
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        课程号
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" disabled="" value="{$course.course_code}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        课程名
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="course_name" class="layui-input" value="{$course.course_name}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        课程学分
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="course_credit" class="layui-input" value="{$course.course_credit}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        课程学时
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="course_hour" class="layui-input" value="{$course.course_hour}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        限选人数
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="course_capacity" class="layui-input" value="{$course.course_capacity}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        上课时间
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="course_time" class="layui-input" value="{$course.course_time}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        上课地点
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="course_room" class="layui-input" value="{$course.course_room}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        课程描述
+                    </label>
+                    <div class="layui-input-block">
+                        <textarea name="course_info" class="layui-textarea" >{$course.course_info}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label for="L_sign" class="layui-form-label">
+                    </label>
+                    <button class="layui-btn" key="set-mine" lay-filter="save" type="submit" name="submit">
+                        确认
+                    </button>
+                </div>
+            </form>
+            <!-- 右侧内容框架，更改从这里结束 -->
+
