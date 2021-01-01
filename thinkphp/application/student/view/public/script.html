@@ -137,65 +137,7 @@
             }
             document.getElementById("data_num").innerHTML = num;
         }
-        function checkPassword() {
-            var newPass = document.getElementById("new_password").value;
-            var renewPass = document.getElementById("renew_password").value;
-            if (newPass != renewPass)
-            {
-                alert("您两次输入的密码不相同，请重试！");
-                return;
-            }
-            var regex = new RegExp('');
-            if (!regex.test(newPass)) {
-                    alert("您输入的新密码复杂度太低（密码中必须包含字母、数字、特殊字符，至少8个字符，最多30个字符）");
-                }
-        }
-        function submitChangePassword() {
-            var newPass = document.getElementById("new_password").value;
-            var renewPass = document.getElementById("renew_password").value;
-            var oldPass = document.getElementById("old_password").value;
-            if (newPass == null || newPass == "" || renewPass == null || renewPass == "" || oldPass == null || oldPass == ""){
-                layer.msg("必填项为空！", {icon:2,time:2000});
-                return;
-            }
-            if (newPass != renewPass) {
-                layer.msg("两次输入密码不同！", {icon:2,time:2000});
-                return;
-            }
-            var regex = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,30}$/;
-            if (!regex.test(newPass)) {
-                layer.msg("您输入的新密码复杂度太低（密码中必须包含字母、数字、特殊字符，至少8个字符，最多30个字符）", {icon:2,time:2000});
-                return;
-            }
-            oldPass = md5(oldPass);
-            newPass = md5(newPass);
-            renewPass = md5(renewPass);
-            $.ajax({
-                url:'',
-                data: {
-                    'old_password': oldPass,
-                    'new_password': newPass,
-                    'renew_password':renewPass,
-                    'submit':true
-                },
-                type:"Post",
-                dataType:"json",
-                success:function(data){
-                    console.log(data);
-                    if(data.status==0){
-                        layer.msg(data.msg, {icon:2,time:2000});
-                    }else{
-                        layer.alert(data.msg, {closeBtn: 0}, function(){history.go(-1);});
-                    }
-                     return false;
-                },
-                error:function(data){
-                    layer.msg('访问网站出错');
-                    return false;
-                }
-            });
-        }
-
+        
         function submitLogin() {
             var user_name = document.forms["login"]["user_name"].value;
             var password = document.forms["login"]["password"].value;
@@ -225,11 +167,10 @@
                 type:"Post",
                 dataType:"json",
                 success:function(data){
-                    console.log(data);
                     if(data.status==0){
                         layer.msg(data.msg, {icon:2,time:2000});
                     }else{
-                        layer.alert(data.msg, {closeBtn: 0}, function(){window.location.href = "{:url('admin/admin/index')}";});
+                        layer.alert(data.msg, {closeBtn: 0}, function(){window.location.href = "{:url('student/elective/index')}";});
                         
                     }
                      return false;
@@ -239,5 +180,40 @@
                     return false;
                 }
             });
+        }
+
+        function submitCourse() {
+            var table = document.getElementsByName('checkbox');
+            var rowNum = table.length;
+            var courses = new Array();
+            for(var i=0;i<rowNum;i++){
+                if(table[i].checked)
+                    courses.push(table[i].value);
+            }
+            if (courses.length == 0)
+            {
+                layer.msg("您未选择课程", {icon:2,time:2000});
+                return;
+            }
+            $.ajax({
+                url:"doElective",
+                data: {
+                    'courses': courses,
+                    'submit':true
+                },
+                type:"Post",
+                dataType:"json",
+                success:function(data){
+                    if(data.status==1){
+                        layer.msg(data.msg, {icon:1,time:2000});
+                    }
+                     return false;
+                },
+                error:function(data){
+                    layer.msg('访问网站出错');
+                    return false;
+                }
+            });
+
         }
     </script>

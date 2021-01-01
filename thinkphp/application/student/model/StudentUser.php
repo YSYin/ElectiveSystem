@@ -1,21 +1,20 @@
 <?php
 
 /**
-* 管理员用户数据表 AdminUser
-* 负责读取、查询管理员用户数据表
-* 提供根据用户账号查询用户信息、根据用户ID查询用户角色、修改用户信息功能
-* @file      AdminUser.php
-* @date      2020/12/20
+* 学生用户数据表 StudentUser
+* 负责读取、查询学生用户数据表
+* @file      StudentUser.php
+* @date      2020/12/31
 * @author    YSY
 * @version   1.0
 */
 
-namespace app\admin\model;
+namespace app\student\model;
 
 use think\Model;
 use think\Db;
 
-class AdminUser extends Model {
+class StudentUser extends Model {
 
     public $status = array(1 => '无效', 2 => '有效');
 
@@ -51,26 +50,12 @@ class AdminUser extends Model {
     }
 
     /**
-     * 获取用户角色ID
-     * @param int $user_id 用户ID
-     * @return array 用户角色列表
-     */
-    public function getRoleByUserID($user_id) {
-        $res = Db::name('user_role')->field('role_id')->where('user_id', $user_id)->select();
-        $role_ids = array();
-        foreach ($res as $k => $value) {
-            $role_ids[] = $value['role_id'];
-        }
-        return $role_ids;
-    }
-
-    /**
      * 检查用户密码是否正确
      * @param string 用户账号 用户密码
      * @return array status, msg
      */
     public function checkUserPassword($user_name, $password) {
-        $res = Db::name('admin_user')->field('password,error_time,error_count, status')->where('user_name', $user_name)->find();
+        $res = Db::name('student_user')->field('password,error_time,error_count, status')->where('user_name', $user_name)->find();
 
         if (!$res) return ['status'=>0,'msg'=>'用户名或密码错误'];
 
@@ -149,30 +134,6 @@ class AdminUser extends Model {
         // allowField,过滤数组中的非数据表字段数据
         $this->allowField(true)->save($data, ['user_name' => $user_name]);
         return $token;
-    }
-
-    /**
-     * 更新用户信息
-     * @param string $user_name 用户名
-     * @param string $data 请求修改的用户属性及用户属性值
-     * @return string 返回token
-     */
-    public function updateUserInfo($user_name, $data) {
-        // allowField,过滤数组中的非数据表字段数据
-        $res = $this->allowField(true)->save($data, ['user_name' => $user_name]);
-        return $res;
-    }
-
-    /**
-     * 添加新用户
-     * @param string $data 用户属性及用户属性值
-     * @return string 返回token
-     */
-    public function addUser($data) {
-        // allowField,过滤数组中的非数据表字段数据
-        $this->data($data);
-        $res = $this->allowField(true)->save();
-        return $res;
     }
 
 }

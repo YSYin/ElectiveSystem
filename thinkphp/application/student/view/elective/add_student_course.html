@@ -1,6 +1,6 @@
             <!-- 右侧内容框架，更改从这里开始 -->
             <blockquote class="layui-elem-quote">
-                <strong>{$real_name}</strong>&nbsp;&nbsp;开设的课程 
+                <strong>{$real_name}</strong>&nbsp;&nbsp;未选的课程 
             </blockquote>
             <xblock>
                 <button class="layui-btn" onclick="search()" lay-filter="sreach">
@@ -14,6 +14,9 @@
             <table class="layui-table" id="tablelist">
                 <thead align="center">
                     <tr>
+                        <th>
+                            ID
+                        </th>
                         <th>
                             课程号
                         </th>
@@ -39,16 +42,17 @@
                             上课地点
                         </th>
                         <th>
-                            课程状态
+                            授课教师
                         </th>
                         <th>
-                            课程描述
+                            操作
                         </th>
                     </tr>
                 </thead>
                 <tbody align="center">
                     {volist name="list" id="vo"}
                     <tr>
+                        <td>{$vo.course_id}</td>
                         <td>{$vo.course_code}</td>
                         <td>{$vo.course_name}</td>
                         <td>{$vo.course_credit}</td>
@@ -57,21 +61,11 @@
                         <td>{$vo.course_student_num}</td>
                         <td>{$vo.course_time}</td>
                         <td>{$vo.course_room}</td>
-                        {if ($vo.course_status==1)}
-                        <td class="td-status">
-                            <span class="layui-btn layui-btn-normal layui-btn-mini">
-                                已激活
-                            </span>
-                        </td>
-                        {else /}
-                        <td class="td-status">
-                            <span class="layui-btn layui-btn-disabled layui-btn-mini">
-                                已冻结
-                            </span>
-                        </td>
-                        {/if}
-                        <td >
-                            <div style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title="{$vo.course_info}">{$vo.course_info}</div>
+                        <td>{$vo.real_name}</td>
+                        <td class="td-manage">
+                            <a href="javascript:;" onclick="member_del(this,'./addStudentCourse?user_id={$Think.get.user_id}&course_id={$vo.course_id}','课程《{$vo.course_name}》', '手动分配')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">手动分配课程</span>
+                            </a>
                         </td>
                     </tr>
                     {/volist} 

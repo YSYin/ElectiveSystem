@@ -124,6 +124,23 @@ class StudentUser extends Base {
     }
 
     /**
+     * 重置用户token，即删除用户免登录时的token
+     * @return 是否成功
+     */
+    public function resetUserToken() {
+        $user_name = input('get.user_name');
+        $data = array();
+        $data['token'] = '';
+        $res = Db::name("student_user")->where("user_name", $user_name)->update($data);
+        if ($res) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
      * 冻结用户 
      * @return 是否成功
      */

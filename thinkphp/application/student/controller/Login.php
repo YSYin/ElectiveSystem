@@ -4,12 +4,12 @@
 * 登录功能控制器
 * 主要负责登录页面显示、身份信息验证、注销登录信息
 * @file      Login.php
-* @date      2020/12/20
+* @date      2020/12/31
 * @author    YSY
 * @version   1.0
 */
 
-namespace app\admin\controller;
+namespace app\student\controller;
 
 use think\Controller;
 use think\Db;
@@ -24,7 +24,7 @@ class Login extends Controller{
      */
     public function index() {
         if (Base::checkAutoLogIn()) {
-            $this->redirect('admin/index');
+            $this->redirect('elective/index');
         }
         else {
             $this->view->engine->layout(false);
@@ -51,14 +51,12 @@ class Login extends Controller{
             }
             $md5_salt = config('md5_salt');
             $password = md5($password.$md5_salt);
-            $admin = model('AdminUser');
+            $admin = model('StudentUser');
             $code = $admin->checkUserPassword($user_name, $password);
             if ($code['status'] == 1) {
-                $info = model('AdminUser')->getInfoByUserName($user_name, 'user_name, real_name, user_id');
+                $info = Db::name('student_user')->field('user_id,user_name')->where('user_name', $user_name)->find();
                 Session::set('user_name', $info['user_name']);
-                Session::set('real_name', $info['real_name']);
                 Session::set('user_id', $info['user_id']);
-                Session::set('role_ids', $admin->getRoleByUserID($info['user_id']));
                 $admin->updateUserLogin($info['user_name']);
 
                 if ($remember) {
@@ -78,12 +76,10 @@ class Login extends Controller{
     public function logout() {
         $user_name = Session::get('user_name');
         Session::set('user_name', null);
-        Session::set('real_name', null);
         Session::set('user_id', null);
-        Session::set('role_ids', null);
         Cookie::set('user_name', null);
         Cookie::set('token', null);
-        model('AdminUser')->updateUserToken($user_name);
+        model('StudentUser')->updateUserToken($user_name);
         $this->redirect('login/index');
     }
 

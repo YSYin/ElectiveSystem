@@ -1,8 +1,5 @@
             <!-- 右侧内容框架，更改从这里开始 -->
             <xblock>
-                <button class="layui-btn" onclick="member_add('添加学生','./addUser','600','500')">
-                    <i class="layui-icon">&#xe608;</i>添加学生
-                </button>
                 <button class="layui-btn" onclick="search()" lay-filter="sreach">
                     <i class="layui-icon">&#xe615;</i>查找学生
                 </button>
@@ -67,26 +64,11 @@
                         </td>
                         {/if}
                         <td class="td-manage">
-                            <a href="javascript:;" onclick="member_edit('修改信息','./editUserInfo?user_name={$vo.user_name}','','510')">
-                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">修改信息</span>
+                            <a href="javascript:;" onclick="member_edit('查看已选课程','./showStudentCourse?user_id={$vo.user_id}&real_name={$vo.real_name}','1200','625')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">查看已选课程</span>
                             </a>
-                            <a href="javascript:;" onclick="member_edit('重置密码','./resetUserPassword?user_name={$vo.user_name}&real_name={$vo.real_name}','','510')">
-                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">重置密码</span>
-                            </a>
-                            <a href="javascript:;" onclick="member_reset(this,'./resetUserToken?user_name={$vo.user_name}', '学生：{$vo.real_name}')">
-                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">重置token</span>
-                            </a>
-                            {if ($vo.status==1)}
-                            <a href="javascript:;" onclick="member_stop(this,'user_name={$vo.user_name}', 'student','学生：{$vo.real_name}')">
-                                <span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">冻结学生</span>
-                            </a>
-                            {else /}
-                            <a href="javascript:;" onclick="member_start(this,'user_name={$vo.user_name}', 'student','学生：{$vo.real_name}')">
-                                <span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">激活学生</span>
-                            </a>
-                            {/if}
-                            <a href="javascript:;" onclick="member_del(this,'./deleteUser?user_id={$vo.user_id}', '学生：{$vo.real_name}')">
-                                <span class="layui-btn layui-btn-small layui-btn-danger layui-btn-radius">删除学生</span>
+                            <a href="javascript:;" onclick="member_add('手动分配课程','./addStudentCourse?user_id={$vo.user_id}&real_name={$vo.real_name}','1200','625')">
+                                <span class="layui-btn layui-btn-normal layui-btn-small layui-btn-radius">手动分配课程</span>
                             </a>
                         </td>
                     </tr>

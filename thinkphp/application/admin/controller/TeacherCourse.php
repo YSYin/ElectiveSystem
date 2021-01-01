@@ -40,7 +40,7 @@ class TeacherCourse extends Base {
         $user_id = (int)input("get.user_id");
         $real_name = input('get.real_name');
         $sql = "SELECT c.course_id, c.course_code, c.course_name, c.course_status, c.course_credit, c.course_hour,"
-              ."c.course_capacity,c.course_student_num, c.course_time, c.course_room\n"
+              ."c.course_capacity,c.course_student_num, c.course_time, c.course_room, c.course_info\n"
               ."FROM course c INNER JOIN teacher_course tc\n"
               ."ON c.course_id = tc.course_id\n"
               ."WHERE tc.teacher_id = '{$user_id}'\n";
@@ -85,20 +85,6 @@ class TeacherCourse extends Base {
         }   
     }
 
-    /**
-     * 取消授课课程
-     * @return 是否成功
-     */
-    public function cancelTeacherCourse() {
-        $user_id = (int)input("get.user_id");
-        $course_id = (int)input('get.course_id');
-        $res = Db::name("teacher_course")->where(['teacher_id' => $user_id, 'course_id' => $course_id])->delete();
-        if ($res){
-            return true;
-        } else {
-            return false;
-        }  
-    }
 
     /**
      * 查询并返回用户本人开设的课程列表，并提供相应的操作接口

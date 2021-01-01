@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="logo"><a href="{:url('@admin/admin/index')}">选课系统</a></div>
+    <div class="open-nav"><i class="iconfont">&#xe699;</i></div>
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;">{:session('user_name')}</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a href="{:url('@admin/login/logout')}">退出</a></dd>
+            </dl>
+        </li>
+    </ul>
+</div>

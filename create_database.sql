@@ -10,13 +10,15 @@ CREATE TABLE `web_elective_db`.`admin_user`
 ( `user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `user_name` VARCHAR(10) NOT NULL COMMENT '用户账号', 
   `password` VARCHAR(32) NOT NULL COMMENT '用户密码，MD5加密', 
-  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '用户状态(1：有效，2：无效)', 
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '用户状态(1：正常，2：冻结)', 
   `real_name` VARCHAR(16)  NOT NULL COMMENT '用户真实姓名', 
   `gender` TINYINT NOT NULL DEFAULT 0 COMMENT '用户性别(1:男, 2:女, 0:未设置)', 
   `email` VARCHAR(320)  NOT NULL DEFAULT '' COMMENT '用户邮箱',
   `mobile_number` VARCHAR(11)  NOT NULL DEFAULT '' COMMENT '用户手机号', 
   `token` VARCHAR(32)  NOT NULL DEFAULT '' COMMENT '用户token，用于保存用户登录信息', 
   `token_set_time` INT NOT NULL DEFAULT 0 COMMENT '设置用户token的时间，用于检查token是否过期', 
+  `error_time` INT NOT NULL DEFAULT 0 COMMENT '用户第一次密码错误的登录时间',
+  `error_count` TINYINT NOT NULL DEFAULT 0 COMMENT '用户密码错误的次数',
   `last_login_ip` INT NOT NULL DEFAULT 0 COMMENT '用户上次登录IP地址', 
   `last_login_time` INT NOT NULL DEFAULT 0 COMMENT '用户上次登录时间', 
   PRIMARY KEY (`user_id`)) ENGINE = MyISAM;
@@ -57,13 +59,31 @@ CREATE TABLE `web_elective_db`.`role_menu`
 #后台用户操作记录表
 CREATE TABLE `web_elective_db`.`admin_log` 
 ( `log_id` INT NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+  `log_level` TINYINT  NOT NULL DEFAULT 1 COMMENT '日志等级(1：正常操作/INFO，2：错误操作/ERROR，3：警告操作/WARNING)', 
   `module` VARCHAR(32) NOT NULL COMMENT '访问模块名称', 
   `controller` VARCHAR(32)  NOT NULL COMMENT '访问控制器名称', 
   `action` VARCHAR(32)  NOT NULL COMMENT '访问方法名称', 
   `user_id` INT  NOT NULL COMMENT '用户ID', 
+  `request_method` VARCHAR(10)  NOT NULL COMMENT 'HTTP请求(GET, POST)',
   `querystring` VARCHAR(255) NOT NULL COMMENT '用户查询参数',
   `ip` INT  NOT NULL COMMENT '用户IP地址',
   `time` INT NOT NULL COMMENT '访问时间', 
+  `description` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '日志描述',
+  PRIMARY KEY (`log_id`)) ENGINE = MyISAM;
+
+#前台用户操作记录表
+CREATE TABLE `web_elective_db`.`student_log` 
+( `log_id` INT NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+  `log_level` TINYINT  NOT NULL DEFAULT 1 COMMENT '日志等级(1：正常操作/INFO，2：错误操作/ERROR，3：警告操作/WARNING)', 
+  `module` VARCHAR(32) NOT NULL COMMENT '访问模块名称', 
+  `controller` VARCHAR(32)  NOT NULL COMMENT '访问控制器名称', 
+  `action` VARCHAR(32)  NOT NULL COMMENT '访问方法名称', 
+  `user_id` INT  NOT NULL COMMENT '用户ID', 
+  `request_method` VARCHAR(10)  NOT NULL COMMENT 'HTTP请求(GET, POST)',
+  `querystring` VARCHAR(255) NOT NULL COMMENT '用户查询参数',
+  `ip` INT  NOT NULL COMMENT '用户IP地址',
+  `time` INT NOT NULL COMMENT '访问时间', 
+  `description` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '日志描述',
   PRIMARY KEY (`log_id`)) ENGINE = MyISAM;
 
 #学生用户表
@@ -71,12 +91,16 @@ CREATE TABLE `web_elective_db`.`student_user`
 ( `user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `user_name` VARCHAR(10) NOT NULL COMMENT '学生账号', 
   `password` VARCHAR(32) NOT NULL COMMENT '用户密码，MD5加密', 
-  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '用户状态(1：有效，2：无效)', 
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '用户状态(1：正常，2：冻结)', 
   `real_name` VARCHAR(16)  NOT NULL COMMENT '用户真实姓名', 
   `gender` TINYINT NOT NULL DEFAULT 0 COMMENT '用户性别(1:男, 2:女, 0:未设置)', 
   `grade` VARCHAR(16) NOT NULL COMMENT '学生年级', 
   `email` VARCHAR(320)  NOT NULL DEFAULT '' COMMENT '用户邮箱',
   `mobile_number` VARCHAR(11)  NOT NULL DEFAULT '' COMMENT '用户手机号', 
+  `token` VARCHAR(32)  NOT NULL DEFAULT '' COMMENT '用户token，用于保存用户登录信息', 
+  `token_set_time` INT NOT NULL DEFAULT 0 COMMENT '设置用户token的时间，用于检查token是否过期', 
+  `error_time` INT NOT NULL DEFAULT 0 COMMENT '用户第一次密码错误的登录时间',
+  `error_count` TINYINT NOT NULL DEFAULT 0 COMMENT '用户密码错误的次数',
   `last_login_ip` INT NOT NULL DEFAULT 0 COMMENT '用户上次登录IP地址', 
   `last_login_time` INT NOT NULL DEFAULT 0 COMMENT '用户上次登录时间', 
   PRIMARY KEY (`user_id`)) ENGINE = MyISAM;
@@ -129,10 +153,10 @@ VALUES (1, 'Admin', '系统管理员，拥有添加、删除、修改教务、�
 
 INSERT INTO `web_elective_db`.`admin_menu` (`menu_id`, `menu_name`, `parent_id`, `menu_icon`, `menu_info`, `controller`, `action`, `listorder`, `display`) 
 VALUES (1, '系统首页', 0, 'xe696', '后台系统主页', 'Admin', 'index', 0, 1),
-       (2, '系统设置', 0, 'xe69e', '修改个人信息、密码', '', '', 999, 1),
-       (3, '修改个人信息', 2, '', '修改个人信息', 'Admin', 'editSelfInfo', 999, 1),
-       (4, '修改密码', 2, '', '修改密码', 'Admin', 'changeSelfPassword', 999, 1),
-       (5, '退出系统', 2, '', '退出系统', 'Login', 'logout', 999, 1),
+       (2, '系统设置', 0, 'xe69e', '修改个人信息、密码', '', '', 990, 1),
+       (3, '修改个人信息', 2, '', '修改个人信息', 'Admin', 'editSelfInfo', 991, 1),
+       (4, '修改登录密码', 2, '', '修改密码', 'Admin', 'changeSelfPassword', 992, 1),
+       (5, '退出系统', 2, '', '退出系统', 'Login', 'logout', 994, 1),
        (6, '教务用户管理', 0, 'xe699', '增删改查教务用户', 'DeanUser', 'index', 1, 1),
        (7, '增加用户', 6, '', '增加教务用户', 'DeanUser', 'addUser', 1, 2), 
        (8, '查询用户', 6, '', '查询教务用户', 'DeanUser', 'searchUser', 1, 2), 
@@ -171,7 +195,7 @@ VALUES (1, '系统首页', 0, 'xe696', '后台系统主页', 'Admin', 'index', 0
        (41, '教师管理', 0, 'xe699', '管理教师授课', 'TeacherCourse', 'index', 5, 1),
        (42, '查看教师开设课程', 41, '', '查看教师开设课程', 'TeacherCourse', 'showTeacherCourse', 5, 2),
        (43, '添加教师开设课程', 41, '', '添加教师开设课程', 'TeacherCourse', 'addTeacherCourse', 5, 2),
-       (44, '取消教师开设课程', 41, '', '取消教师开设课程', 'TeacherCourse', 'cancelTeacherCourse', 5, 2),
+       (44, '', 41, '', '', '', '', 5, 2),
        (45, '选课管理', 0, 'xe699', '管理学生选课操作', 'StudentCourse', 'index', 6, 1),
        (46, '查看学生选课结果', 45, '', '查看学生选课结果', 'StudentCourse', 'showStudentCourse', 6, 2),
        (47, '添加学生选课', 45, '', '添加学生选课', 'StudentCourse', 'addStudentCourse', 6, 2),
@@ -179,7 +203,8 @@ VALUES (1, '系统首页', 0, 'xe696', '后台系统主页', 'Admin', 'index', 0
        (49, '开课管理', 0, 'xe699', '查看本人开设课程', 'TeacherCourse', 'showSelfCourse', 7, 1),
        (50, '修改课程', 49, '', '修改本人开设课程信息', 'TeacherCourse', 'editSelfCourse', 7, 2),
        (51, '学生管理', 0, 'xe699', '查看所有选课学生', 'TeacherCourse', 'showSelfStudent', 8, 1),
-       (52, '查看选课学生信息', 51, '', '查看选课学生信息', 'TeacherCourse', 'showSelfStudentInfo', 8, 2);
+       (52, '查看选课学生信息', 51, '', '查看选课学生信息', 'TeacherCourse', 'showSelfStudentInfo', 8, 2),
+       (53, '重置免登录token', 2, '', '重置个人免登录token', 'Admin', 'resetSelfToken', 993, 1);
 
 
 INSERT INTO `web_elective_db`.`user_role` (`user_id`, `role_id`)
@@ -188,16 +213,16 @@ VALUES (2, 1), (3, 2), (4, 2), (5, 3), (6, 3), (7, 3), (8, 3), (9, 3);
 INSERT INTO `web_elective_db`.`role_menu` (`role_id`, `menu_id`)
 VALUES (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13),
        (1, 14), (1, 15), (1, 16), (1, 17), (1, 18), (1, 19), (1, 20), (1, 21), (1, 22), (1, 23), (1, 24), (1, 25), 
-       (1, 26), (1, 27), (1, 28), (1, 29), (1, 30), (1, 31), (1, 32), 
+       (1, 26), (1, 27), (1, 28), (1, 29), (1, 30), (1, 31), (1, 32), (1, 53), 
        (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 33), (2, 34), (2, 35), (2, 36), (2, 37), (2, 38), (2, 39), (2, 40),
-       (2, 41), (2, 42), (2, 43), (2, 44), (2, 45), (2, 46), (2, 47), (2, 48),
-       (3, 1), (3, 2), (3, 3), (3, 4), (3, 25), (3, 49), (3, 50), (3, 51), (3, 52); 
+       (2, 41), (2, 42), (2, 43), (2, 44), (2, 45), (2, 46), (2, 47), (2, 48), (2, 53),
+       (3, 1), (3, 2), (3, 3), (3, 4), (3, 25), (3, 49), (3, 50), (3, 51), (3, 52), (3, 53); 
 
 INSERT INTO `web_elective_db`.`student_user` (`user_id`, `user_name`, `password`, `status`, `real_name`, `gender`, `grade`, `email`, `mobile_number`)
-VALUES (1, '2001210100', MD5('2001210100'), 1, '张一', 1, '本科一年级', '2001210100@ss.pku.edu.cn', '13131578966'),
-(2, '2001210102', MD5('2001210102'), 1, '褚凤岐', 2, '本科一年级', '2001210102@ss.pku.edu.cn', '15894591510'),
-(3, '2001210103', MD5('2001210103'), 1, '郑洪业', 1, '本科一年级', '2001210103@ss.pku.edu.cn', '13401526314'),
-(4, '2001210104', MD5('2001210104'), 1, '韩偓', 1, '本科一年级', '2001210104@ss.pku.edu.cn', '15196701530');
+VALUES (1, '2001210100', MD5(CONCAT(MD5('password'), 'web-2020')), 1, '张一', 1, '本科一年级', '2001210100@ss.pku.edu.cn', '13131578966'),
+(2, '2001210102', MD5(CONCAT(MD5('password'), 'web-2020')), 1, '褚凤岐', 2, '本科一年级', '2001210102@ss.pku.edu.cn', '15894591510'),
+(3, '2001210103', MD5(CONCAT(MD5('password'), 'web-2020')), 1, '郑洪业', 1, '本科一年级', '2001210103@ss.pku.edu.cn', '13401526314'),
+(4, '2001210104', MD5(CONCAT(MD5('password'), 'web-2020')), 1, '韩偓', 1, '本科一年级', '2001210104@ss.pku.edu.cn', '15196701530');
 
 INSERT INTO `web_elective_db`.`course` (`course_id`, `course_code`, `course_name`, `course_credit`, `course_hour`, `course_capacity`, `course_student_num`, `course_time`, `course_room`, `course_info`)
 VALUES (1, '4853210254', '魔药学', 3, 48, 20, 1, '周三下午', '1号楼', '魔药学'),

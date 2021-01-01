@@ -60,31 +60,47 @@ class Admin extends Base {
 
             $new_password = input("post.new_password");
             $renew_password = input("post.renew_password");
+            $old_password = input("post.old_password");
             if ($new_password != $renew_password) {
-                return $this->error("您两次输入的密码不相同，请检查后重新输入");
+                return json(['status'=>0,'msg'=>'您两次输入的密码不相同，请检查后重新输入']);
             }
 
             $md5_salt = config('md5_salt');
-            $old_password = md5(md5(input("post.old_password")).$md5_salt);
+            $old_password = md5($old_password.$md5_salt);
             $admin = model('AdminUser');
             $info_name = 'password';
             $info = $admin->getInfoByUserName($user_name, $info_name);
             if ($info['password'] != $old_password) {
-                return $this->error("您输入的旧密码不正确，请检查后重新输入");
+                return json(['status'=>0,'msg'=>'您输入的旧密码不正确，请检查后重新输入']);
             }
-            $new_password = md5(md5(input("post.new_password")).$md5_salt);
+            $new_password = md5($new_password.$md5_salt);
             $data = array();
             $data['password'] = $new_password;
             $res = $admin->updateUserInfo($user_name, $data);
             if ($res) {
-                return $this->success("您已成功修改密码");
+                return json(['status'=>1,'msg'=>'您已成功修改密码']);
             }
             else {
-                return $this->error("修改密码失败");
+                return json(['status'=>0,'msg'=>'修改密码失败']);
             }
         }
         else {
             return $this->fetch();
+        }
+    }
+
+    /**
+     * 重置个人免登录token
+     * @return 是否成功
+     */
+    public function resetSelfToken() {
+        $user_name = Session::get("user_name");
+        $res = model("AdminUser")->updateUserToken($user_name);
+        if ($res) {
+            return $this->success("您已成功重置免登录token");
+        }
+        else {
+            return $this->error("重置免登录token失败");
         }
     }
 

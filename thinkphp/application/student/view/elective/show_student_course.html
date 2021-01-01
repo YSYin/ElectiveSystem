@@ -1,6 +1,6 @@
             <!-- 右侧内容框架，更改从这里开始 -->
             <blockquote class="layui-elem-quote">
-                <strong>{$real_name}</strong>&nbsp;&nbsp;开设的课程 
+                <strong>{$real_name}</strong>&nbsp;&nbsp;已选的课程 
             </blockquote>
             <xblock>
                 <button class="layui-btn" onclick="search()" lay-filter="sreach">
@@ -42,7 +42,7 @@
                             课程状态
                         </th>
                         <th>
-                            课程描述
+                            操作
                         </th>
                     </tr>
                 </thead>
@@ -70,8 +70,10 @@
                             </span>
                         </td>
                         {/if}
-                        <td >
-                            <div style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title="{$vo.course_info}">{$vo.course_info}</div>
+                        <td class="td-manage">
+                            <a href="javascript:;" onclick="member_del(this,'./cancelStudentCourse?course_id={$vo.course_id}&user_id={$Think.get.user_id}', '课程《{$vo.course_name}》',tip='强制退选')">
+                                <span class="layui-btn layui-btn-small layui-btn-danger layui-btn-radius">强制退课</span>
+                            </a>
                         </td>
                     </tr>
                     {/volist} 
