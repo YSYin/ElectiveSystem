@@ -45,11 +45,7 @@ class TeacherCourse extends Base {
               ."ON c.course_id = tc.course_id\n"
               ."WHERE tc.teacher_id = {$user_id}\n";
         $list = Db::query($sql);
-        if (!$list) {
-            Base::addLog(3, '教师账号ID不存在');
-            Base::logout();
-            return "<script>alert('非法操作！');window.history.go(-1);</script>";
-        }
+        
         $this->assign("list", $list);
         $this->assign("data_num", count($list));
         $this->assign("real_name", $real_name);

@@ -22,13 +22,15 @@ class Base extends Controller {
      * 控制器任何方法之前调用，检查用户是否登陆
      * 根据检查结果跳转响应网页
      */
+
 	public function _initialize() {
 
 		if (!(self::checkAutoLogIn())) {
 			$this->error("您还未登录", 'login/index');
 		}
-		$this->addLog();
+
 	}
+	
 
 	/**
      * 检查用户是否已登录，或者是否可以根据cookie自动登录
@@ -54,22 +56,6 @@ class Base extends Controller {
 		
 	}
 
-
-	/**
-     * 添加操作日志 
-     */
-	private function addLog() {
-		$data = array();
-        $data['querystring'] = request()->query()?'?'.request()->query():'';
-        $data['module'] = request()->module();
-        $data['controller'] = request()->controller();
-        $data['action'] = request()->action();
-        $data['request_method'] = request()->method();
-        $data['user_id'] = Session::get('user_id');
-        $data['ip'] = ip2long(request()->ip());
-		$data['time'] = time();
-        Db::name('admin_log')->insert($data);
-	}
 
 	/**
 	 * 发送post请求

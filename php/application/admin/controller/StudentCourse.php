@@ -39,11 +39,6 @@ class StudentCourse extends Base {
               ."ON c.course_id = sc.course_id\n"
               ."WHERE sc.student_id = {$user_id}\n";
         $list = Db::query($sql);
-        if (!$list) {
-            Base::addLog(3, '学生账号ID不存在');
-            Base::logout();
-            return "<script>alert('非法操作！');window.history.go(-1);</script>";
-        }
         $this->assign("list", $list);
         $this->assign("data_num", count($list));
         $this->assign("real_name", $real_name);

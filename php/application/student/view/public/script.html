@@ -167,7 +167,7 @@
                 type:"Post",
                 dataType:"json",
                 success:function(data){
-                    if(data.status==0){
+                    if(data.status==-1){
                         layer.msg(data.msg, {icon:2,time:2000});
                     }else{
                         layer.alert(data.msg, {closeBtn: 0}, function(){window.location.href = "{:url('student/elective/index')}";});
@@ -198,7 +198,7 @@
             $.ajax({
                 url:"doElective",
                 data: {
-                    'courses': courses,
+                    'courses': courses.join('.'),
                     'submit':true
                 },
                 type:"Post",
@@ -207,7 +207,11 @@
                     if(data.status==1){
                         layer.msg(data.msg, {icon:1,time:2000});
                     }
-                     return false;
+                    else {
+                        layer.msg(data.msg, {icon:2,time:2000});
+                    }
+
+                    return false;
                 },
                 error:function(data){
                     layer.msg('访问网站出错');

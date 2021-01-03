@@ -44,13 +44,14 @@ class Elective extends Base {
      * 接收并处理学生选课请求:原始版本
      * @return 是否成功
      */
-    public function doElective2() {
-        
+    public function doSimpleElective() {
         if (request()->isPost()) {
         	$user_id = Session::get("user_id");
-        	$courses = $_POST["courses"];
+          $user_id = 1;
+        	$course_str = input("post.courses");
+          $courses = explode('.', $course_str);
+          error_log($course_str."\r\n",3,'E:\phpstudy_pro\errors.log');
         	foreach ($courses as $key => $value) {
-        		
             $course_id = (int)$value;
             $select_before = Db::name('student_course')->where(['student_id' => $user_id, 'course_id' => $course_id])->find();
             if ($select_before) continue;
@@ -58,25 +59,8 @@ class Elective extends Base {
             if ($data['course_capacity'] == $data['course_student_num']) continue;
             $res1 = Db::name("student_course")->insert(['student_id' => $user_id, 'course_id' => $course_id]);
             $res2 = Db::name("course")->where('course_id', $course_id)->setInc('course_student_num');
-                
         	};
         	return json(['status' => 1, 'msg' => '您的选课请求已处理，请点击左侧菜单查看选课结果']);
-        }
-    }
-
-    /**
-     * 初始化redis
-     */
-    public function initRedis() {
-
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379);
-        $courses = Db::name('course')->field('course_id,course_capacity')->select();
-        foreach ($courses as $key => $course) {
-            $listKey = (string)$course['course_id'];
-            for($i = 1; $i <= $course['course_capacity']; $i++) {
-              $redis->rPush($listKey,$i);
-            }
         }
     }
 
@@ -86,27 +70,33 @@ class Elective extends Base {
      * @return 是否成功
      */
     public function doElective() {
-
-        $url = "localhost:3456/process";
-        $post_data = array();
-        $post_data["key"] = implode("#", array('1', '2', '3'));
-        $res = Base::sendPost($url, $post_data);
-        echo var_dump($res);
-        return;
- 
         if (request()->isPost()) {
         	$user_id = Session::get("user_id");
-        	$courses = $_POST["courses"];
+          $user_id = 1;
+        	$course_str = input("post.courses");
+          $courses = explode('.', $course_str);
+          $redis = new \Redis();
+          $redis->connect('localhost', 6379);
+          $course_ids = '';
+          
         	foreach ($courses as $key => $value) {
-        		$course_id = (int)$value;
-        		$select_before = Db::name('student_course')->where(['student_id' => $user_id, 'course_id' => $course_id])->find();
-        		if ($select_before) continue;
-        		$data = Db::name("course")->field('course_capacity, course_student_num')->where('course_id', $course_id)->find();
-        		if ($data['course_capacity'] == $data['course_student_num']) continue;
-        		$res1 = Db::name("student_course")->insert(['student_id' => $user_id, 'course_id' => $course_id]);
-            	$res2 = Db::name("course")->where('course_id', $course_id)->update(['course_student_num' => $data['course_student_num'] + 1]);
+        		  $course_id = $value;
+              if ($redis->hSet('course_'.$course_id.'_elections', $user_id, '1')) {
+                  if ($redis->rPop('course_'.$course_id)) {
+                      $course_ids .= $course_id.'.';
+                  }
+              }
         	};
-        	return json(['status' => 1, 'msg' => '您的选课请求已处理，请点击左侧菜单查看选课结果']);
+          if ($course_ids != '') {
+              $url = "localhost:9090/process";
+              $post_data = array();
+              $post_data['user_id'] = $user_id;
+              $post_data["course_ids"] = rtrim($course_ids, '.');
+              error_log("发送课程ID".$course_str."到消息队列\r\n",3,'E:\phpstudy_pro\errors.log');
+              $res = Base::sendPost($url, $post_data);
+              error_log("收到回复".$res."到消息队列\r\n",3,'E:\phpstudy_pro\errors.log');
+              return json(['status' => 1, 'msg' => $res]);
+          } else return json(['status' => -1, 'msg' => '您选择的课程人数已满或您重复选课，本次请求无效']);
         }
     }
 
