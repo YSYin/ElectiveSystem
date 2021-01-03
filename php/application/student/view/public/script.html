@@ -1,0 +1,219 @@
+<script>
+         /*用户-添加*/
+        function member_add(title,url,w,h){
+            x_admin_show(title,url,w,h);
+        }
+        /*用户-查看*/
+        function member_show(title,url,w,h){
+            x_admin_show(title,url,w,h);
+        }
+
+         /*用户-停用*/
+        function member_stop(obj,id,type,name){
+            if (type == 'dean'){
+                url = '../DeanUser/blockUser?' + id;
+                cln = '教务';
+            }
+            else if (type == 'teacher')
+            {
+                url = '../TeacherUser/blockUser?' + id;
+                cln = '教师';
+            }
+            else if (type == 'student')
+            {
+                url = '../StudentUser/blockUser?' + id;
+                cln = '学生';
+            }
+            else if (type == 'course')
+            {
+                url = '../Course/blockCourse?' + id;
+                cln = '课程';
+            }
+            layer.confirm('确认要冻结 '+name+' 吗？',function(index){
+                //发异步把用户状态进行更改
+                $.get(url, function(result){
+                    if (result == true) {
+                        $(obj).attr("onclick", "member_start(this,'"+id+"','"+type+"','"+name+"')");
+                        $(obj).html('<span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">激活'+cln+'</span>');
+                        $(obj).parents("tr").find(".td-status").html('<span class="layui-btn layui-btn-disabled layui-btn-mini">已冻结</span>');
+                        layer.msg('已冻结 '+name+' !',{icon: 1,time:1000});
+                    }
+                    else layer.msg('冻结 '+name+' 失败!',{icon: 2,time:1000});
+                });
+            });
+        }
+
+        /*用户-启用*/
+        function member_start(obj,id, type, name){
+            if (type == 'dean'){
+                url = '../DeanUser/activateUser?' + id;
+                cln = '教务';
+            }
+            else if (type == 'teacher')
+            {
+                url = '../TeacherUser/activateUser?' + id;
+                cln = '教师';
+            }
+            else if (type == 'student')
+            {
+                url = '../StudentUser/activateUser?' + id;
+                cln = '学生';
+            }
+            else if (type == 'course')
+            {
+                url = '../Course/activateCourse?' + id;
+                cln = '课程';
+            }
+            layer.confirm('确认要激活 '+name+' 吗？',function(index){
+                //发异步把用户状态进行更改
+                $.get(url, function(result){
+                    if (result == true) {
+                        $(obj).attr("onclick", "member_stop(this,'"+id+"','"+type+"','"+name+"')");
+                        $(obj).html('<span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">冻结'+cln+'</span>');
+                        $(obj).parents("tr").find(".td-status").html('<span class="layui-btn layui-btn-normal layui-btn-mini">已激活</span>');
+                        layer.msg('已激活 '+name+' !',{icon: 1,time:1000});
+                    }
+                    else layer.msg('激活 '+name+' 失败!',{icon: 2,time:1000});
+                });
+            });
+        }
+        /*用户-重置token*/
+        function member_reset(obj,url, name){
+            layer.confirm('确认要重置 '+name+' 的免登录token吗？',function(index){
+                //发异步把用户状态进行更改
+                $.get(url, function(result){
+                    if (result == true) {
+                        layer.msg('已重置 '+name+' 的免登录token!',{icon: 1,time:1000});
+                    }
+                    else layer.msg('重置 '+name+' 的免登录token失败!',{icon: 2,time:1000});
+                });
+            });
+        }
+        // 用户-编辑
+        function member_edit (title,url,w,h, nest=false) {
+            x_admin_show(title,url,w,h, nest); 
+        }
+        /*密码-修改*/
+        function member_password(title,url,w,h){
+            x_admin_show(title,url,w,h);  
+        }
+        /*用户-删除*/
+        function member_del(obj,url,name,tip='删除'){
+            layer.confirm('确认要'+tip+' '+name+' 吗？',function(index){
+                //发异步删除数据
+                $.get(url, function(result){
+                    if (result == true){
+                        $(obj).parents("tr").remove();
+                        layer.msg('已'+tip+' '+name+'!',{icon:1,time:1000});
+                    }
+                    else layer.msg(tip+' '+name+' 失败!',{icon:2,time:1000});
+                });
+                
+            });
+        }
+        function search(){
+            var storeId = document.getElementById('tablelist');
+            var textId = document.getElementById('search_text');
+            var rowsLength = storeId.rows.length;
+            var colsLength = storeId.rows.item(0).cells.length;
+            var key = textId.value;
+            var showFlag = new Array(rowsLength).fill(0);
+            for(var searchCol=0;searchCol<colsLength-1;searchCol++){
+                for(var i=1;i<rowsLength;i++){
+                    var searchText = storeId.rows[i].cells[searchCol].innerHTML;      
+                    if(searchText.search(key) >= 0){
+                        showFlag[i] = 1; 
+                    }
+                }
+            }
+            var num = 0;
+            for(var i=1;i<rowsLength;i++){
+                if (showFlag[i] == 1){
+                    num += 1;
+                    storeId.rows[i].style.display='';
+                }else{
+                    storeId.rows[i].style.display='none';
+                }
+            }
+            document.getElementById("data_num").innerHTML = num;
+        }
+        
+        function submitLogin() {
+            var user_name = document.forms["login"]["user_name"].value;
+            var password = document.forms["login"]["password"].value;
+            var captcha = document.forms["login"]["captcha"].value;
+            var remember_ck = $('input:radio[name="remember"]:checked').val();
+            var remember = 0;
+            if (remember_ck) remember = 1;
+            if (user_name == null || user_name == "" || password == null || password == "" || captcha == null || captcha == ""){
+                layer.msg("必填项为空！", {icon:2,time:1000});
+                return;
+            }
+            var regex = /^\d{10}$/;
+            if (!regex.test(user_name)) {
+                layer.msg("您输入的账号格式不正确，账号要求为10位数字", {icon:2,time:1000});
+                return;
+            }
+            password = md5(password);
+            $.ajax({
+                url:"dologin",
+                data: {
+                    'user_name': user_name,
+                    'password': password,
+                    'captcha':captcha,
+                    'remember':remember,
+                    'submit':true
+                },
+                type:"Post",
+                dataType:"json",
+                success:function(data){
+                    if(data.status==0){
+                        layer.msg(data.msg, {icon:2,time:2000});
+                    }else{
+                        layer.alert(data.msg, {closeBtn: 0}, function(){window.location.href = "{:url('student/elective/index')}";});
+                        
+                    }
+                     return false;
+                },
+                error:function(data){
+                    layer.msg('访问网站出错');
+                    return false;
+                }
+            });
+        }
+
+        function submitCourse() {
+            var table = document.getElementsByName('checkbox');
+            var rowNum = table.length;
+            var courses = new Array();
+            for(var i=0;i<rowNum;i++){
+                if(table[i].checked)
+                    courses.push(table[i].value);
+            }
+            if (courses.length == 0)
+            {
+                layer.msg("您未选择课程", {icon:2,time:2000});
+                return;
+            }
+            $.ajax({
+                url:"doElective",
+                data: {
+                    'courses': courses,
+                    'submit':true
+                },
+                type:"Post",
+                dataType:"json",
+                success:function(data){
+                    if(data.status==1){
+                        layer.msg(data.msg, {icon:1,time:2000});
+                    }
+                     return false;
+                },
+                error:function(data){
+                    layer.msg('访问网站出错');
+                    return false;
+                }
+            });
+
+        }
+    </script>

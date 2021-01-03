@@ -1,0 +1,78 @@
+
+            <!-- 右侧内容框架，更改从这里开始 -->
+            <form class="layui-form" action="javascript:;" onsubmit="addUser(); return false;" id="form">
+                <div class="layui-form-item">
+                    <label for="L_user_name" class="layui-form-label">
+                        <span class="x-red">*</span>教师账号
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" name="user_name" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_real_name" class="layui-form-label">
+                        <span class="x-red">*</span>真实姓名
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_real_name" name="real_name" required="" lay-verify="required"
+                        autocomplete="off" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_real_name" class="layui-form-label">
+                        <span class="x-red">*</span>性别
+                    </label>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="radio" name="gender" value=1 title="男">
+                            <input type="radio" name="gender" value=2 title="女">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_email" class="layui-form-label">
+                        <span class="x-red">*</span>电子邮箱
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" required="" lay-verify="required"
+                        autocomplete="off" id="L_email" name="email" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_mobile_number" class="layui-form-label">
+                        <span class="x-red">*</span>手机号码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" required="" lay-verify="required"
+                        autocomplete="off" id="L_mobile_number" name="mobile_number" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_pass" class="layui-form-label">
+                        <span class="x-red">*</span>初始密码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="password" id="new_password" name="new_password" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input" onpaste="return false" oncontextmenu="return false" oncopy="return false" oncut="return false">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label">
+                        <span class="x-red">*</span>确认密码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="password" id="renew_password" name="renew_password" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input" onpaste="return false" oncontextmenu="return false" oncopy="return false" oncut="return false">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_sign" class="layui-form-label">
+                    </label>
+                    <button class="layui-btn" key="set-mine" lay-filter="save" type="submit" name="submit">
+                        确认
+                    </button>
+                </div>
+            </form>
+            <!-- 右侧内容框架，更改从这里结束 -->
+
