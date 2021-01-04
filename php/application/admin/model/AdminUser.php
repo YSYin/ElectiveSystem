@@ -72,12 +72,13 @@ class AdminUser extends Model {
     public function checkUserPassword($user_name, $password) {
         $res = Db::name('admin_user')->field('password,error_time,error_count, status')->where('user_name', $user_name)->find();
 
-        if (!$res) return ['status'=>0,'msg'=>'用户名或密码错误'];
+        if (!$res) return ['status'=>-1,'msg'=>'用户名或密码错误'];
 
         $data = array();
         $now = time();
 
         if ($res['status'] == 2) {
+            if ($res['error_time'] < 0) return ['status'=>-1,'msg'=>'抱歉，由于某些原因，系统管理员已将您的账户冻结'];
             if ($now - $res['error_time'] > 30 * 60)
             {
                 $data['error_time'] = 0;
@@ -85,7 +86,7 @@ class AdminUser extends Model {
                 $data['status'] = 1;
                 $this->save($data, ['user_name' => $user_name]);
             }
-            else return ['status'=>0,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您的账户冻结30分钟，请等待冻结期结束后重试'];
+            else return ['status'=>-1,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您的账户冻结30分钟，请等待冻结期结束后重试'];
         }
         
         if ($password == $res['password']){
@@ -95,13 +96,18 @@ class AdminUser extends Model {
             $this->save($data, ['user_name' => $user_name]);
             return ['status'=>1,'msg'=>'登陆成功'];
         }
+        
+        if ($res['error_count'] == 1) {
+            $this->save(["error_time" => $now], ['user_name' => $user_name]);
+        }
+
         if ($now - $res['error_time'] > 10 * 60)
         {
             $data['error_time'] = $now;
             $data['error_count'] = 1;
             $data['status'] = 1;
             $this->save($data, ['user_name' => $user_name]);
-            return ['status'=>0,'msg'=>'用户名或密码错误'];
+            return ['status'=>-1,'msg'=>'用户名或密码错误'];
         }
 
         if ($res['error_count'] == 4) {
@@ -109,11 +115,12 @@ class AdminUser extends Model {
             $data['error_count'] = 5;
             $data['status'] = 2;
             $this->save($data, ['user_name' => $user_name]);
-            return ['status'=>0,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您冻结30分钟，请等待冻结结束后重试'];
+            return ['status'=>-1,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您冻结30分钟，请等待冻结结束后重试'];
         }
+        
 
         $this->save(["error_count" => $res['error_count'] + 1], ['user_name' => $user_name]);
-        return ['status'=>0,'msg'=>'用户名或密码错误'];
+        return ['status'=>-1,'msg'=>'用户名或密码错误'];
     }
 
     /**

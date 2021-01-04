@@ -225,6 +225,7 @@ class TeacherUser extends Base {
         }
         $data = array();
         $data['status'] = 2;
+        $data['error_time'] = -1;
         $res = model("AdminUser")->updateUserInfo($user_name, $data);
         if ($res) {
             return json(['status' => 1,'msg'=>'']);
@@ -247,6 +248,8 @@ class TeacherUser extends Base {
         }
         $data = array();
         $data['status'] = 1;
+        $data['error_time'] = 0;
+        $data['error_count'] = 0;
         $res = model("AdminUser")->updateUserInfo($user_name, $data);
         if ($res) {
             return json(['status' => 1,'msg'=>'']);

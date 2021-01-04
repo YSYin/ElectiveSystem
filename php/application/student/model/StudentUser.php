@@ -57,7 +57,7 @@ class StudentUser extends Model {
     public function checkUserPassword($user_name, $password) {
         $res = Db::name('student_user')->field('password,error_time,error_count, status')->where('user_name', $user_name)->find();
 
-        if (!$res) return ['status'=>0,'msg'=>'用户名或密码错误'];
+        if (!$res) return ['status'=>-1,'msg'=>'用户名或密码错误'];
 
         $data = array();
         $now = time();
@@ -70,7 +70,7 @@ class StudentUser extends Model {
                 $data['status'] = 1;
                 $this->save($data, ['user_name' => $user_name]);
             }
-            else return ['status'=>0,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您的账户冻结30分钟，请等待冻结期结束后重试'];
+            else return ['status'=>-1,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您的账户冻结30分钟，请等待冻结期结束后重试'];
         }
         
         if ($password == $res['password']){
@@ -86,7 +86,7 @@ class StudentUser extends Model {
             $data['error_count'] = 1;
             $data['status'] = 1;
             $this->save($data, ['user_name' => $user_name]);
-            return ['status'=>0,'msg'=>'用户名或密码错误'];
+            return ['status'=>-1,'msg'=>'用户名或密码错误'];
         }
 
         if ($res['error_count'] == 4) {
@@ -94,11 +94,11 @@ class StudentUser extends Model {
             $data['error_count'] = 5;
             $data['status'] = 2;
             $this->save($data, ['user_name' => $user_name]);
-            return ['status'=>0,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您冻结30分钟，请等待冻结结束后重试'];
+            return ['status'=>-1,'msg'=>'您在10分钟内连续5次输入密码错误，系统已将您冻结30分钟，请等待冻结结束后重试'];
         }
 
         $this->save(["error_count" => $res['error_count'] + 1], ['user_name' => $user_name]);
-        return ['status'=>0,'msg'=>'用户名或密码错误'];
+        return ['status'=>-1,'msg'=>'用户名或密码错误'];
     }
 
     /**

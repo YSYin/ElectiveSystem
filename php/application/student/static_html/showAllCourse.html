@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>选课系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/php/public/static/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/php/public/static/css/font.css">
+    <link rel="stylesheet" href="/php/public/static/css/xadmin.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/Swiper/3.4.2/css/swiper.min.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.jquery.min.js"></script>
+    <script src="/php/public/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/php/public/static/js/xadmin.js"></script>
+</head>
+<body>
+<!-- 顶部开始 -->
+<div class="container">
+    <div class="logo"><a href="/php/public/index.php/admin/admin/index.html">选课系统</a></div>
+    <div class="open-nav"><i class="iconfont">&#xe699;</i></div>
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;">2001210100</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a href="/php/public/index.php/admin/login/logout.html">退出</a></dd>
+            </dl>
+        </li>
+    </ul>
+</div>
+<!-- 顶部结束 -->
+<!-- 中部开始 -->
+<div class="wrapper">
+    <!-- 左侧菜单开始 -->
+    <div class="left-nav">
+        <div id="side-nav">
+            <ul id="nav">
+                <li class="list" current>
+                    <a href="./index.html">
+                        <i class="iconfont">&#xe761;</i>
+                        欢迎页面
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                </li>
+                <li class="list" current>
+                    <a href="./showAllCourse.html">
+                        <i class="iconfont">&#xe761;</i>
+                        选课
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                </li>
+                <li class="list" current>
+                    <a href="./showElectiveResult.html">
+                        <i class="iconfont">&#xe761;</i>
+                        查看选课结果
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 左侧菜单结束 -->
+    <!-- 右侧主体开始 -->
+    <div class="page-content">
+        <div class="content">
+                        <!-- 右侧内容框架，更改从这里开始 -->
+            <blockquote class="layui-elem-quote">
+                距离选课开始还有&nbsp;<strong id="d" style="color: red">-</strong>&nbsp;天&nbsp;<strong id="h" style="color: red">-</strong>&nbsp;时&nbsp;<strong id="m" style="color: red">-</strong>&nbsp;分&nbsp;<strong id="s" style="color: red">-</strong>&nbsp;秒
+            </blockquote>
+            <xblock>
+                <button class="layui-btn" onclick="submitCourse()" lay-filter="sreach" disabled="true" id="submit">
+                    <i class="layui-icon">&#xe616;</i>提交
+                </button>
+                <button class="layui-btn" onclick="search()" lay-filter="sreach">
+                    <i class="layui-icon">&#xe615;</i>查找课程
+                </button>
+                <div class="layui-input-inline">
+                    <input type="text" name="username"  placeholder="请输入课程编号或名称" autocomplete="off" class="layui-input" id="search_text">
+                </div>
+                <span class="x-right" style="line-height:40px">共有数据：<strong id="data_num">5</strong>&nbsp;&nbsp;条&nbsp;&nbsp;</span>
+            </xblock>
+            <table class="layui-table" id="tablelist">
+                <thead align="center">
+                    <tr>
+                        <th>
+                        </th>
+                        <th>
+                            课程号
+                        </th>
+                        <th>
+                            课程名
+                        </th>
+                        <th>
+                            课程学分
+                        </th>
+                        <th>
+                            课程学时
+                        </th>
+                        <th>
+                            限选人数
+                        </th>
+                        <th>
+                            授课教师
+                        </th>
+                        <th>
+                            上课时间
+                        </th>
+                        <th>
+                            上课地点
+                        </th>
+                        <th>
+                            课程描述
+                        </th>
+                    </tr>
+                </thead>
+                <tbody align="center">
+                                        <tr>
+                        <td>
+                            <input name="checkbox" type="checkbox" value="1">
+                        </td>
+                        <td>4853210254</td>
+                        <td>飞行</td>
+                        <td>3</td>
+                        <td>48</td>
+                        <td>20</td>
+                        <td>霍琦夫人</td>
+                        <td>周三下午</td>
+                        <td>室外</td>
+                        <td >
+                            <div style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title="学习飞天扫帚的使用">学习飞天扫帚的使用</div>
+                        </td>
+                    </tr>
+                                        <tr>
+                        <td>
+                            <input name="checkbox" type="checkbox" value="2">
+                        </td>
+                        <td>4853210268</td>
+                        <td>魔法史</td>
+                        <td>2</td>
+                        <td>24</td>
+                        <td>20</td>
+                        <td>宾斯</td>
+                        <td>周二下午</td>
+                        <td>二楼</td>
+                        <td >
+                            <div style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title="学习魔法世界的历史">学习魔法世界的历史</div>
+                        </td>
+                    </tr>
+                                        <tr>
+                        <td>
+                            <input name="checkbox" type="checkbox" value="3">
+                        </td>
+                        <td>4853210275</td>
+                        <td>魔咒学</td>
+                        <td>5</td>
+                        <td>48</td>
+                        <td>20</td>
+                        <td>弗立维</td>
+                        <td>周一上午</td>
+                        <td>三楼</td>
+                        <td >
+                            <div style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title="学习魔杖的挥动方法和咒语的正确发音">学习魔杖的挥动方法和咒语的正确发音</div>
+                        </td>
+                    </tr>
+                                        <tr>
+                        <td>
+                            <input name="checkbox" type="checkbox" value="4">
+                        </td>
+                        <td>4853210292</td>
+                        <td>占卜学</td>
+                        <td>3</td>
+                        <td>48</td>
+                        <td>20</td>
+                        <td>特里劳妮</td>
+                        <td>周五下午</td>
+                        <td>北塔楼</td>
+                        <td >
+                            <div style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title="学习预测未来">学习预测未来</div>
+                        </td>
+                    </tr>
+                                        <tr>
+                        <td>
+                            <input name="checkbox" type="checkbox" value="5">
+                        </td>
+                        <td>4853210375</td>
+                        <td>神奇动物保护课</td>
+                        <td>2</td>
+                        <td>48</td>
+                        <td>20</td>
+                        <td>海格</td>
+                        <td>周三上午</td>
+                        <td>室外</td>
+                        <td >
+                            <div style="width:100px;overflow:hidden; white-space:nowrap; text-overflow:ellipsis" title="学习一系列的神奇生物">学习一系列的神奇生物</div>
+                        </td>
+                    </tr>
+                     
+                </tbody>
+            </table>
+            <!-- 右侧内容框架，更改从这里结束 -->
+
+        </div>
+    </div>
+    <!-- 右侧主体结束 -->
+</div>
+<!-- 中部结束 -->
+<!-- 底部开始 -->
+<div class="footer">
+    <div class="copyright">Copyright ©2020 选课系统 v1.0 All Rights Reserved. 本后台系统由X前端框架提供前端技术支持</div>
+</div>
+<!-- 底部结束 -->
+</body>
+<script>
+        function search(){
+            var storeId = document.getElementById('tablelist');
+            var textId = document.getElementById('search_text');
+            var rowsLength = storeId.rows.length;
+            var colsLength = storeId.rows.item(0).cells.length;
+            var key = textId.value;
+            var showFlag = new Array(rowsLength).fill(0);
+            for(var searchCol=0;searchCol<colsLength-1;searchCol++){
+                for(var i=1;i<rowsLength;i++){
+                    var searchText = storeId.rows[i].cells[searchCol].innerHTML;      
+                    if(searchText.search(key) >= 0){
+                        showFlag[i] = 1; 
+                    }
+                }
+            }
+            var num = 0;
+            for(var i=1;i<rowsLength;i++){
+                if (showFlag[i] == 1){
+                    num += 1;
+                    storeId.rows[i].style.display='';
+                }else{
+                    storeId.rows[i].style.display='none';
+                }
+            }
+            document.getElementById("data_num").innerHTML = num;
+        }
+        
+        function submitLogin() {
+            var user_name = document.forms["login"]["user_name"].value;
+            var password = document.forms["login"]["password"].value;
+            var captcha = document.forms["login"]["captcha"].value;
+            var remember_ck = $('input:radio[name="remember"]:checked').val();
+            var remember = 0;
+            if (remember_ck) remember = 1;
+            if (user_name == null || user_name == "" || password == null || password == "" || captcha == null || captcha == ""){
+                layer.msg("必填项为空！", {icon:2,time:1000});
+                return;
+            }
+            var regex = /^\d{10}$/;
+            if (!regex.test(user_name)) {
+                layer.msg("您输入的账号格式不正确，账号要求为10位数字", {icon:2,time:1000});
+                return;
+            }
+            password = md5(password);
+            $.ajax({
+                url:"dologin",
+                data: {
+                    'user_name': user_name,
+                    'password': password,
+                    'captcha':captcha,
+                    'remember':remember,
+                    'submit':true
+                },
+                type:"Post",
+                dataType:"json",
+                success:function(data){
+                    if(data.status==-1){
+                        layer.msg(data.msg, {icon:2,time:2000});
+                    }else{
+                        layer.alert(data.msg, {closeBtn: 0}, function(){window.location.href = "/php/public/index.php/student/elective/index.html";});
+                        
+                    }
+                     return false;
+                },
+                error:function(data){
+                    layer.msg('访问网站出错');
+                    return false;
+                }
+            });
+        }
+
+        function submitCourse() {
+            var table = document.getElementsByName('checkbox');
+            var rowNum = table.length;
+            var courses = new Array();
+            for(var i=0;i<rowNum;i++){
+                if(table[i].checked)
+                    courses.push(table[i].value);
+            }
+            if (courses.length == 0)
+            {
+                layer.msg("您未选择课程", {icon:2,time:2000});
+                return;
+            }
+            $.ajax({
+                url:"doElective",
+                data: {
+                    'courses': courses.join('.'),
+                    'submit':true
+                },
+                type:"Post",
+                dataType:"json",
+                success:function(data){
+                    if(data.status==1){
+                        layer.msg(data.msg, {icon:1,time:2000});
+                    }
+                    else {
+                        layer.msg(data.msg, {icon:2,time:2000});
+                    }
+
+                    return false;
+                },
+                error:function(data){
+                    layer.msg('访问网站出错');
+                    return false;
+                }
+            });
+
+        }
+        
+        $(document).ready(function countDown() {
+            $.get("getElectiveTime", function(data){
+                    var start = data.start;
+                    var end = data.end;
+                    var now = Math.floor((new Date()).valueOf() / 1000);
+                    if (now > end) {
+                        alert('选课已经结束！');
+                        return;
+                    }
+                    if (now >= start) return;
+                    var leftTime = start - now - 1;
+                    var ele = document.getElementById("submit");
+                    ele.disabled=true;
+                    ele.style.cursor="not-allowed";
+                    function CountDown() {
+                        if (leftTime >= 0) {
+                            d = Math.floor(leftTime/60/60/24);
+                            h = Math.floor(leftTime/60/60%24);
+                            m = Math.floor(leftTime/60%60);
+                            s = Math.floor(leftTime%60);
+                            document.getElementById("d").innerHTML=d;
+                            document.getElementById("h").innerHTML=h;
+                            document.getElementById("m").innerHTML=m;
+                            document.getElementById("s").innerHTML=s;
+                            --leftTime;
+                        } else {
+                            ele.disabled=false;
+                            ele.style.cursor="pointer";
+                            clearInterval(timer);
+                        }
+                    }
+                    timer = setInterval(CountDown, 1000);   
+                    console.log(start);
+                    console.log(end);
+                    console.log(now);
+                })
+        });
+    </script>
+</html>

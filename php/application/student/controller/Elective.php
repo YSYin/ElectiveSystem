@@ -16,6 +16,10 @@ use think\Session;
 
 class Elective extends Base {
 
+
+    protected static $start_time = 0;
+    protected static $end_time = 0;
+
     /**
      * 欢迎页面
      */
@@ -24,27 +28,52 @@ class Elective extends Base {
     }
 
     /**
+    * 设置并返回选课开始和结束时间
+    */
+    public function getElectiveTime() {
+        $electiveTimeFile = APP_PATH.DS.'student'.DS.'electiveTime.txt';
+        $str = file_get_contents($electiveTimeFile);
+        $arr = explode(':', $str);
+        Elective::$start_time = (int)$arr[0];
+        Elective::$end_time = (int)$arr[1];
+        return json(['start' => $arr[0], 'end' => $arr[1]]);
+    }
+
+    /**
      * 查询并返回学生可选的全部课程列表，并提供相应的操作接口
      */
     public function showAllCourse() {
-    	$sql = "SELECT c.course_id, c.course_code, c.course_name, c.course_credit, c.course_capacity, c.course_hour, c.course_room, c.course_time, c.course_info, au.real_name\n"
-              ."FROM course c LEFT JOIN teacher_course tc\n"
-              ."ON c.course_id = tc.course_id\n"
-              ."LEFT JOIN admin_user au\n"
-              ."ON tc.teacher_id = au.user_id\n"
-              ."WHERE c.course_status = 1";
+        $staticHtmlFile = APP_PATH.DS.'student'.DS.'static_html'.DS.'showAllCourse.html';
+        if(file_exists($staticHtmlFile) && filectime($staticHtmlFile) >= time()- 60*60*2)
+            return file_get_contents($staticHtmlFile);
+      	$sql = "SELECT c.course_id, c.course_code, c.course_name, c.course_credit, c.course_capacity, c.course_hour, c.course_room, c.course_time, c.course_info, au.real_name\n"
+                ."FROM course c LEFT JOIN teacher_course tc\n"
+                ."ON c.course_id = tc.course_id\n"
+                ."LEFT JOIN admin_user au\n"
+                ."ON tc.teacher_id = au.user_id\n"
+                ."WHERE c.course_status = 1";
         $list = Db::query($sql);
         $this->assign("list", $list);
         $this->assign("data_num", count($list));
-        return $this->fetch();
+        $html = $this->fetch();
+        if(file_exists($staticHtmlFile)) {
+            unlink($staticHtmlFile);
+        }
+        file_put_contents($staticHtmlFile, $html);
+        return $html;
     }
-
 
     /**
      * 接收并处理学生选课请求:原始版本
      * @return 是否成功
      */
     public function doSimpleElective() {
+        $this->getElectiveTime();
+        $now = time();
+        if ($now < Elective::$start_time) 
+          return json(['status' => -1, 'msg' => '选课还未开始！']);
+        if ($now >= Elective::$end_time) 
+          return json(['status' => -1, 'msg' => '选课已经结束！']);
         if (request()->isPost()) {
         	$user_id = Session::get("user_id");
           $user_id = 1;
@@ -70,6 +99,13 @@ class Elective extends Base {
      * @return 是否成功
      */
     public function doElective() {
+        $this->getElectiveTime();
+        $now = time();
+        if ($now < Elective::$start_time) 
+          return json(['status' => -1, 'msg' => '选课还未开始！']);
+        if ($now >= Elective::$end_time) 
+          return json(['status' => -1, 'msg' => '选课已经结束！']);
+        
         if (request()->isPost()) {
         	$user_id = Session::get("user_id");
           $user_id = 1;

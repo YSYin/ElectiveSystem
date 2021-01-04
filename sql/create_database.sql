@@ -136,15 +136,14 @@ CREATE TABLE `web_elective_db`.`student_course`
 
 
 INSERT INTO `web_elective_db`.`admin_user` (`user_id`, `user_name`, `password`, `status`, `real_name`, `gender`, `email`, `mobile_number`) 
-VALUES (1, '0000000000', MD5(CONCAT(MD5('0'), 'web-2020')), 1, 'Y', 1, 'y@muggle.cn', '12345678910'),
-       (2, '1111111111', MD5(CONCAT(MD5('PASS@11111'), 'web-2020')), 1, '邓布利多', 1, 'dumbledore@hogwarts.edu', '13141567890'),
-       (3, '1011010001', MD5(CONCAT(MD5('PASS@10001'), 'web-2020')), 1, '麦格', 2, 'mcgonagall@hogwarts.edu', '19141667890'),
-       (4, '1011010002', MD5(CONCAT(MD5('PASS@10002'), 'web-2020')), 1, '斯内普', 1, 'snape@hogwarts.edu', '12141667890'),
-       (5, '1010010010', MD5(CONCAT(MD5('PASS@10010'), 'web-2020')), 1, '霍琦夫人', 2, 'hooch@hogwarts.edu', '16151667890'),
-       (6, '1010010011', MD5(CONCAT(MD5('PASS@10011'), 'web-2020')), 1, '宾斯', 1, 'binns@hogwarts.edu', '15171667890'),
-       (7, '1010010012', MD5(CONCAT(MD5('PASS@10012'), 'web-2020')), 1, '弗立维', 1, 'filtwick@hogwarts.edu', '14191667890'),
-       (8, '1010010013', MD5(CONCAT(MD5('PASS@10013'), 'web-2020')), 1, '特里劳妮', 2, 'trelawney@hogwarts.edu', '18141667890'),
-       (9, '1010010014', MD5(CONCAT(MD5('PASS@10014'), 'web-2020')), 1, '海格', 1, 'haiger@hogwarts.edu', '17141667890');
+VALUES (1, '1111111111', MD5(CONCAT(MD5('PASS@11111'), 'web-2020')), 1, '邓布利多', 1, 'dumbledore@hogwarts.edu', '13141567890'),
+       (2, '1011010001', MD5(CONCAT(MD5('PASS@10001'), 'web-2020')), 1, '麦格', 2, 'mcgonagall@hogwarts.edu', '19141667890'),
+       (3, '1011010002', MD5(CONCAT(MD5('PASS@10002'), 'web-2020')), 1, '斯内普', 1, 'snape@hogwarts.edu', '12141667890'),
+       (4, '1010010010', MD5(CONCAT(MD5('PASS@10010'), 'web-2020')), 1, '霍琦夫人', 2, 'hooch@hogwarts.edu', '16151667890'),
+       (5, '1010010011', MD5(CONCAT(MD5('PASS@10011'), 'web-2020')), 1, '宾斯', 1, 'binns@hogwarts.edu', '15171667890'),
+       (6, '1010010012', MD5(CONCAT(MD5('PASS@10012'), 'web-2020')), 1, '弗立维', 1, 'filtwick@hogwarts.edu', '14191667890'),
+       (7, '1010010013', MD5(CONCAT(MD5('PASS@10013'), 'web-2020')), 1, '特里劳妮', 2, 'trelawney@hogwarts.edu', '18141667890'),
+       (8, '1010010014', MD5(CONCAT(MD5('PASS@10014'), 'web-2020')), 1, '海格', 1, 'haiger@hogwarts.edu', '17141667890');
 
 INSERT INTO `web_elective_db`.`admin_role` (`role_id`, `role_name`, `role_info`) 
 VALUES (1, 'Admin', '系统管理员，拥有添加、删除、修改教务、教师、学生权限'),
@@ -184,55 +183,59 @@ VALUES (1, '系统首页', 0, 'xe696', '后台系统主页', 'Admin', 'index', 0
        (30, '删除用户', 24, '', '删除学生用户', 'StudentUser', 'deleteUser', 3, 2), 
        (31, '重置用户密码', 24, '', '重置学生用户密码', 'StudentUser', 'resetUserPassword', 3, 2), 
        (32, '冻结用户token', 24, '', '重置学生用户token', 'StudentUser', 'resetUserToken', 3, 2),
-       (33, '课程管理', 0, 'xe699', '增、删、改、查课程', 'Course', 'index', 4, 1),
-       (34, '修改授课教师', 33, '', '修改授课教师', 'Course', 'changeCourseTeacher', 4, 2),
-       (35, '删除课程', 33, '', '删除课程', 'Course', 'deleteCourse', 4, 2),
-       (36, '冻结课程', 33, '', '冻结课程', 'Course', 'blockCourse', 4, 2),
-       (37, '激活课程', 33, '', '激活课程', 'Course', 'activateCourse', 4, 2),
-       (38, '修改课程', 33, '', '修改课程', 'Course', 'editCourseInfo', 4, 2),
-       (39, '查看课程信息', 33, '', '查看课程信息', 'Course', 'showCourseInfo', 4, 2),
-       (40, '查看课程选课学生', 33, '', '查看课程选课学生', 'Course', 'showCourseStudent', 4, 2),
-       (41, '教师管理', 0, 'xe699', '管理教师授课', 'TeacherCourse', 'index', 5, 1),
-       (42, '查看教师开设课程', 41, '', '查看教师开设课程', 'TeacherCourse', 'showTeacherCourse', 5, 2),
-       (43, '添加教师开设课程', 41, '', '添加教师开设课程', 'TeacherCourse', 'addTeacherCourse', 5, 2),
-       (44, '', 41, '', '', '', '', 5, 2),
-       (45, '选课管理', 0, 'xe699', '管理学生选课操作', 'StudentCourse', 'index', 6, 1),
-       (46, '查看学生选课结果', 45, '', '查看学生选课结果', 'StudentCourse', 'showStudentCourse', 6, 2),
-       (47, '添加学生选课', 45, '', '添加学生选课', 'StudentCourse', 'addStudentCourse', 6, 2),
-       (48, '取消学生选课', 45, '', '取消学生选课', 'StudentCourse', 'cancelStudentCourse', 6, 2),
-       (49, '开课管理', 0, 'xe699', '查看本人开设课程', 'TeacherCourse', 'showSelfCourse', 7, 1),
-       (50, '修改课程', 49, '', '修改本人开设课程信息', 'TeacherCourse', 'editSelfCourse', 7, 2),
-       (51, '学生管理', 0, 'xe699', '查看所有选课学生', 'TeacherCourse', 'showSelfStudent', 8, 1),
-       (52, '查看选课学生信息', 51, '', '查看选课学生信息', 'TeacherCourse', 'showSelfStudentInfo', 8, 2),
-       (53, '重置免登录token', 2, '', '重置个人免登录token', 'Admin', 'resetSelfToken', 993, 1);
+       (33, '选课时间设置', 0, 'xe699', '设置选课时间：主页', 'ElectiveTime', 'index', 4, 1),
+       (34, '设置选课时间-处理', 24, '', '设置选课时间：处理设置', 'ElectiveTime', 'setTime', 4, 2),
+       (35, '课程管理', 0, 'xe699', '增、删、改、查课程', 'Course', 'index', 4, 1),
+       (36, '修改授课教师', 35, '', '修改授课教师', 'Course', 'changeCourseTeacher', 4, 2),
+       (37, '删除课程', 35, '', '删除课程', 'Course', 'deleteCourse', 4, 2),
+       (38, '冻结课程', 35, '', '冻结课程', 'Course', 'blockCourse', 4, 2),
+       (39, '激活课程', 35, '', '激活课程', 'Course', 'activateCourse', 4, 2),
+       (40, '修改课程', 35, '', '修改课程', 'Course', 'editCourseInfo', 4, 2),
+       (41, '查看课程信息', 35, '', '查看课程信息', 'Course', 'showCourseInfo', 4, 2),
+       (42, '查看课程选课学生', 35, '', '查看课程选课学生', 'Course', 'showCourseStudent', 4, 2),
+       (43, '教师管理', 0, 'xe699', '管理教师授课', 'TeacherCourse', 'index', 5, 1),
+       (44, '查看教师开设课程', 43, '', '查看教师开设课程', 'TeacherCourse', 'showTeacherCourse', 5, 2),
+       (45, '添加教师开设课程', 43, '', '添加教师开设课程', 'TeacherCourse', 'addTeacherCourse', 5, 2),
+       (46, '选课管理', 0, 'xe699', '管理学生选课操作', 'StudentCourse', 'index', 6, 1),
+       (47, '查看学生选课结果', 46, '', '查看学生选课结果', 'StudentCourse', 'showStudentCourse', 6, 2),
+       (48, '添加学生选课', 46, '', '添加学生选课', 'StudentCourse', 'addStudentCourse', 6, 2),
+       (49, '取消学生选课', 46, '', '取消学生选课', 'StudentCourse', 'cancelStudentCourse', 6, 2),
+       (50, '开课管理', 0, 'xe699', '查看本人开设课程', 'TeacherCourse', 'showSelfCourse', 7, 1),
+       (51, '修改课程', 50, '', '修改本人开设课程信息', 'TeacherCourse', 'editSelfCourse', 7, 2),
+       (52, '学生管理', 0, 'xe699', '查看所有选课学生', 'TeacherCourse', 'showSelfStudent', 8, 1),
+       (53, '查看选课学生信息', 52, '', '查看选课学生信息', 'TeacherCourse', 'showSelfStudentInfo', 8, 2),
+       (54, '重置免登录token', 2, '', '重置个人免登录token', 'Admin', 'resetSelfToken', 993, 1);
 
 
 INSERT INTO `web_elective_db`.`user_role` (`user_id`, `role_id`)
-VALUES (2, 1), (3, 2), (4, 2), (5, 3), (6, 3), (7, 3), (8, 3), (9, 3);
+VALUES (1, 1), (2, 2), (3, 2), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3);
 
 INSERT INTO `web_elective_db`.`role_menu` (`role_id`, `menu_id`)
 VALUES (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13),
        (1, 14), (1, 15), (1, 16), (1, 17), (1, 18), (1, 19), (1, 20), (1, 21), (1, 22), (1, 23), (1, 24), (1, 25), 
-       (1, 26), (1, 27), (1, 28), (1, 29), (1, 30), (1, 31), (1, 32), (1, 53), 
-       (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 33), (2, 34), (2, 35), (2, 36), (2, 37), (2, 38), (2, 39), (2, 40),
-       (2, 41), (2, 42), (2, 43), (2, 44), (2, 45), (2, 46), (2, 47), (2, 48), (2, 53),
-       (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 25), (3, 49), (3, 50), (3, 51), (3, 52), (3, 53); 
+       (1, 26), (1, 27), (1, 28), (1, 29), (1, 30), (1, 31), (1, 32), (1, 33), (1, 34), (1, 54), 
+       (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 35), (2, 36), (2, 37), (2, 38), (2, 39), (2, 40),
+       (2, 41), (2, 42), (2, 43), (2, 44), (2, 45), (2, 46), (2, 47), (2, 48), (2, 49), (2, 54),
+       (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 50), (3, 51), (3, 52), (3, 54); 
 
 INSERT INTO `web_elective_db`.`student_user` (`user_id`, `user_name`, `password`, `status`, `real_name`, `gender`, `grade`, `email`, `mobile_number`)
-VALUES (1, '2001210100', MD5(CONCAT(MD5('PASS@10100'), 'web-2020')), 1, '张一', 1, '本科一年级', '2001210100@ss.pku.edu.cn', '13131578966'),
-(2, '2001210102', MD5(CONCAT(MD5('PASS@10102'), 'web-2020')), 1, '褚凤岐', 2, '本科一年级', '2001210102@ss.pku.edu.cn', '15894591510'),
-(3, '2001210103', MD5(CONCAT(MD5('PASS@10103'), 'web-2020')), 1, '郑洪业', 1, '本科一年级', '2001210103@ss.pku.edu.cn', '13401526314'),
-(4, '2001210104', MD5(CONCAT(MD5('PASS@10104'), 'web-2020')), 1, '韩偓', 1, '本科一年级', '2001210104@ss.pku.edu.cn', '15196701530');
+VALUES (1, '2001210100', MD5(CONCAT(MD5('PASS@10100'), 'web-2020')), 1, '哈利', 1, '本科一年级', 'harry@hogwarts.edu', '13131578966'),
+(2, '2001210102', MD5(CONCAT(MD5('PASS@10102'), 'web-2020')), 1, '赫敏', 2, '本科一年级', 'hermione@hogwarts.edu', '15894591510'),
+(3, '2001210103', MD5(CONCAT(MD5('PASS@10103'), 'web-2020')), 1, '罗恩', 1, '本科一年级', 'ron@hogwarts.edu', '13401526314'),
+(4, '2001210104', MD5(CONCAT(MD5('PASS@10104'), 'web-2020')), 1, '张秋', 1, '本科一年级', 'chochang@hogwarts.edu', '15196701530'),
+(5, '1901210105', MD5(CONCAT(MD5('PASS@10105'), 'web-2020')), 1, '弗雷德', 1, '本科二年级', 'fred@hogwarts.edu', '13296701530'),
+(6, '1901210106', MD5(CONCAT(MD5('PASS@10106'), 'web-2020')), 1, '乔治', 1, '本科二年级', 'george@hogwarts.edu', '16696701530'),
+(7, '1801210107', MD5(CONCAT(MD5('PASS@10107'), 'web-2020')), 1, '塞德里克', 1, '本科三年级', 'cedric@hogwarts.edu', '18196701530'),
+(8, '1701210108', MD5(CONCAT(MD5('PASS@10108'), 'web-2020')), 1, '查理', 1, '本科四年级', 'charlie@hogwarts.edu', '15996701530'),
+(9, '2001210109', MD5(CONCAT(MD5('PASS@10109'), 'web-2020')), 1, '马尔福', 1, '本科一年级', 'malfoy@hogwarts.edu', '19196701530'),
+(10, '1901210110', MD5(CONCAT(MD5('PASS@10110'), 'web-2020')), 1, '珀西', 1, '本科二年级', 'percy@hogwarts.edu', '15186701530');
 
 INSERT INTO `web_elective_db`.`course` (`course_id`, `course_code`, `course_name`, `course_credit`, `course_hour`, `course_capacity`, `course_student_num`, `course_time`, `course_room`, `course_info`)
-VALUES (1, '4853210254', '魔药学', 3, 48, 20, 1, '周三下午', '1号楼', '魔药学'),
-       (2, '4853210268', '飞行', 3, 48, 20, 4, '周二下午', '1号楼', '飞行'),
-       (3, '4853210275', '神奇动物', 3, 48, 20, 2, '周一上午', '1号楼', '神奇动物'),
-       (4, '4853210292', '黑魔法', 5, 48, 20, 1, '周五下午', '5号楼', '黑魔法'),
-       (5, '4853210375', '咒语学', 2, 48, 20, 1, '周四上午', '3号楼', '咒语学'); 
+VALUES (1, '4853210254', '飞行', 3, 48, 20, 0, '周三下午', '室外', '学习飞天扫帚的使用'),
+       (2, '4853210268', '魔法史', 2, 24, 20, 0, '周二下午', '二楼', '学习魔法世界的历史'),
+       (3, '4853210275', '魔咒学', 5, 48, 20, 0, '周一上午', '三楼', '学习魔杖的挥动方法和咒语的正确发音'),
+       (4, '4853210292', '占卜学', 3, 48, 20, 0, '周五下午', '北塔楼', '学习预测未来'),
+       (5, '4853210375', '神奇动物课', 2, 48, 20, 0, '周三上午', '室外', '学习一系列的神奇生物'); 
 
 INSERT INTO `web_elective_db`.`teacher_course` (`teacher_id`, `course_id`)
-VALUES (5, 1), (6, 2), (7, 3), (8, 4), (9, 5);
-
-INSERT INTO `web_elective_db`.`student_course` (`student_id`, `course_id`)
-VALUES (1, 1), (1, 2), (1, 3), (1, 4), (2, 2), (3, 2), (3, 3), (4, 2), (4, 5);
+VALUES (4, 1), (5, 2), (6, 3), (7, 4), (8, 5);

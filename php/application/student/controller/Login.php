@@ -44,10 +44,10 @@ class Login extends Controller{
             $remember = input("post.remember");
 
             if (!$user_name) {
-                return json(['status'=>0,'msg'=>'账号为空']);
+                return json(['status'=>-1,'msg'=>'账号为空']);
             }
             if (!$password) {
-                return json(['status'=>0,'msg'=>'密码为空']);
+                return json(['status'=>-1,'msg'=>'密码为空']);
             }
             $md5_salt = config('md5_salt');
             $password = md5($password.$md5_salt);

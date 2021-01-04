@@ -1,6 +1,9 @@
             <!-- 右侧内容框架，更改从这里开始 -->
+            <blockquote class="layui-elem-quote">
+                距离选课开始还有&nbsp;<strong id="d" style="color: red">-</strong>&nbsp;天&nbsp;<strong id="h" style="color: red">-</strong>&nbsp;时&nbsp;<strong id="m" style="color: red">-</strong>&nbsp;分&nbsp;<strong id="s" style="color: red">-</strong>&nbsp;秒
+            </blockquote>
             <xblock>
-                <button class="layui-btn" onclick="submitCourse()" lay-filter="sreach">
+                <button class="layui-btn" onclick="submitCourse()" lay-filter="sreach" disabled="true" id="submit">
                     <i class="layui-icon">&#xe616;</i>提交
                 </button>
                 <button class="layui-btn" onclick="search()" lay-filter="sreach">

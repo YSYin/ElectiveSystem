@@ -27,7 +27,6 @@ class AdminMenu extends Model {
         $where = array();
         $user_id = Session::get('user_id');
         $role_ids = Session::get('role_ids');
-        if ($user_id != 1) {
             $res = Db::name('role_menu')->field('menu_id')
                                         ->where('role_id','in', $role_ids)
                                         ->select();
@@ -39,7 +38,6 @@ class AdminMenu extends Model {
                 $menu_ids[] = $value['menu_id'];
             }
             $where['menu_id'] = ['in', $menu_ids];
-        }
 
         if ($display) {
             $where['display'] = $display;

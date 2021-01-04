@@ -70,9 +70,6 @@ class Base extends Controller {
 	private function checkUserAccess() {
 
 		$user_id = Session::get('user_id');
-        if ($user_id==1) {
-            return true;
-        }
 
         $c = strtolower(request()->controller());
         $a = strtolower(request()->action());

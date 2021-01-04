@@ -37,7 +37,7 @@ class Base extends Controller {
      * @return bool 
      */
 	public static function checkAutoLogIn(){
-		if (Session::has('user_name') && Session::has('user_id')){
+		if (Session::has('user_name') && Session::has('user_id') && !(Session::has('role_ids'))){
 			return true;
 		}
 		else if (Cookie::has('user_name') && Cookie::has('token'))

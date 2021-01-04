@@ -203,6 +203,7 @@ class StudentUser extends Base {
         }
         $data = array();
         $data['status'] = 2;
+        $data['error_time'] = -1;
         $res = Db::name("student_user")->where("user_name", $user_name)->update($data);
         if ($res) {
             return json(['status' => 1,'msg'=>'']);
@@ -225,6 +226,8 @@ class StudentUser extends Base {
         }
         $data = array();
         $data['status'] = 1;
+        $data['error_time'] = 0;
+        $data['error_count'] = 0;
         $res = Db::name("student_user")->where("user_name", $user_name)->update($data);
         if ($res) {
             return json(['status' => 1,'msg'=>'']);

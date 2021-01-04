@@ -1,116 +1,4 @@
 <script>
-         /*用户-添加*/
-        function member_add(title,url,w,h){
-            x_admin_show(title,url,w,h);
-        }
-        /*用户-查看*/
-        function member_show(title,url,w,h){
-            x_admin_show(title,url,w,h);
-        }
-
-         /*用户-停用*/
-        function member_stop(obj,id,type,name){
-            if (type == 'dean'){
-                url = '../DeanUser/blockUser?' + id;
-                cln = '教务';
-            }
-            else if (type == 'teacher')
-            {
-                url = '../TeacherUser/blockUser?' + id;
-                cln = '教师';
-            }
-            else if (type == 'student')
-            {
-                url = '../StudentUser/blockUser?' + id;
-                cln = '学生';
-            }
-            else if (type == 'course')
-            {
-                url = '../Course/blockCourse?' + id;
-                cln = '课程';
-            }
-            layer.confirm('确认要冻结 '+name+' 吗？',function(index){
-                //发异步把用户状态进行更改
-                $.get(url, function(result){
-                    if (result == true) {
-                        $(obj).attr("onclick", "member_start(this,'"+id+"','"+type+"','"+name+"')");
-                        $(obj).html('<span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">激活'+cln+'</span>');
-                        $(obj).parents("tr").find(".td-status").html('<span class="layui-btn layui-btn-disabled layui-btn-mini">已冻结</span>');
-                        layer.msg('已冻结 '+name+' !',{icon: 1,time:1000});
-                    }
-                    else layer.msg('冻结 '+name+' 失败!',{icon: 2,time:1000});
-                });
-            });
-        }
-
-        /*用户-启用*/
-        function member_start(obj,id, type, name){
-            if (type == 'dean'){
-                url = '../DeanUser/activateUser?' + id;
-                cln = '教务';
-            }
-            else if (type == 'teacher')
-            {
-                url = '../TeacherUser/activateUser?' + id;
-                cln = '教师';
-            }
-            else if (type == 'student')
-            {
-                url = '../StudentUser/activateUser?' + id;
-                cln = '学生';
-            }
-            else if (type == 'course')
-            {
-                url = '../Course/activateCourse?' + id;
-                cln = '课程';
-            }
-            layer.confirm('确认要激活 '+name+' 吗？',function(index){
-                //发异步把用户状态进行更改
-                $.get(url, function(result){
-                    if (result == true) {
-                        $(obj).attr("onclick", "member_stop(this,'"+id+"','"+type+"','"+name+"')");
-                        $(obj).html('<span class="layui-btn layui-btn-warm layui-btn-small layui-btn-radius">冻结'+cln+'</span>');
-                        $(obj).parents("tr").find(".td-status").html('<span class="layui-btn layui-btn-normal layui-btn-mini">已激活</span>');
-                        layer.msg('已激活 '+name+' !',{icon: 1,time:1000});
-                    }
-                    else layer.msg('激活 '+name+' 失败!',{icon: 2,time:1000});
-                });
-            });
-        }
-        /*用户-重置token*/
-        function member_reset(obj,url, name){
-            layer.confirm('确认要重置 '+name+' 的免登录token吗？',function(index){
-                //发异步把用户状态进行更改
-                $.get(url, function(result){
-                    if (result == true) {
-                        layer.msg('已重置 '+name+' 的免登录token!',{icon: 1,time:1000});
-                    }
-                    else layer.msg('重置 '+name+' 的免登录token失败!',{icon: 2,time:1000});
-                });
-            });
-        }
-        // 用户-编辑
-        function member_edit (title,url,w,h, nest=false) {
-            x_admin_show(title,url,w,h, nest); 
-        }
-        /*密码-修改*/
-        function member_password(title,url,w,h){
-            x_admin_show(title,url,w,h);  
-        }
-        /*用户-删除*/
-        function member_del(obj,url,name,tip='删除'){
-            layer.confirm('确认要'+tip+' '+name+' 吗？',function(index){
-                //发异步删除数据
-                $.get(url, function(result){
-                    if (result == true){
-                        $(obj).parents("tr").remove();
-                        layer.msg('已'+tip+' '+name+'!',{icon:1,time:1000});
-                    }
-                    else layer.msg(tip+' '+name+' 失败!',{icon:2,time:1000});
-                });
-                
-            });
-        }
         function search(){
             var storeId = document.getElementById('tablelist');
             var textId = document.getElementById('search_text');
@@ -220,4 +108,42 @@
             });
 
         }
+        
+        $(document).ready(function countDown() {
+            $.get("getElectiveTime", function(data){
+                    var start = data.start;
+                    var end = data.end;
+                    var now = Math.floor((new Date()).valueOf() / 1000);
+                    if (now > end) {
+                        alert('选课已经结束！');
+                        return;
+                    }
+                    if (now >= start) return;
+                    var leftTime = start - now - 1;
+                    var ele = document.getElementById("submit");
+                    ele.disabled=true;
+                    ele.style.cursor="not-allowed";
+                    function CountDown() {
+                        if (leftTime >= 0) {
+                            d = Math.floor(leftTime/60/60/24);
+                            h = Math.floor(leftTime/60/60%24);
+                            m = Math.floor(leftTime/60%60);
+                            s = Math.floor(leftTime%60);
+                            document.getElementById("d").innerHTML=d;
+                            document.getElementById("h").innerHTML=h;
+                            document.getElementById("m").innerHTML=m;
+                            document.getElementById("s").innerHTML=s;
+                            --leftTime;
+                        } else {
+                            ele.disabled=false;
+                            ele.style.cursor="pointer";
+                            clearInterval(timer);
+                        }
+                    }
+                    timer = setInterval(CountDown, 1000);   
+                    console.log(start);
+                    console.log(end);
+                    console.log(now);
+                })
+        });
     </script>
