@@ -71,20 +71,6 @@ CREATE TABLE `web_elective_db`.`admin_log`
   `description` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '日志描述',
   PRIMARY KEY (`log_id`)) ENGINE = InnoDB;
 
-#前台用户操作记录表
-CREATE TABLE `web_elective_db`.`student_log` 
-( `log_id` INT NOT NULL AUTO_INCREMENT COMMENT '记录ID',
-  `log_level` TINYINT  NOT NULL DEFAULT 1 COMMENT '日志等级(1：正常操作/INFO，2：错误操作/ERROR，3：警告操作/WARNING)', 
-  `module` VARCHAR(32) NOT NULL COMMENT '访问模块名称', 
-  `controller` VARCHAR(32)  NOT NULL COMMENT '访问控制器名称', 
-  `action` VARCHAR(32)  NOT NULL COMMENT '访问方法名称', 
-  `user_id` INT  NOT NULL COMMENT '用户ID', 
-  `request_method` VARCHAR(10)  NOT NULL COMMENT 'HTTP请求(GET, POST)',
-  `querystring` VARCHAR(255) NOT NULL COMMENT '用户查询参数',
-  `ip` INT  NOT NULL COMMENT '用户IP地址',
-  `time` INT NOT NULL COMMENT '访问时间', 
-  `description` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '日志描述',
-  PRIMARY KEY (`log_id`)) ENGINE = InnoDB;
 
 #学生用户表
 CREATE TABLE `web_elective_db`.`student_user` 
@@ -239,3 +225,7 @@ VALUES (1, '4853210254', '飞行', 3, 48, 20, 0, '周三下午', '室外', '学�
 
 INSERT INTO `web_elective_db`.`teacher_course` (`teacher_id`, `course_id`)
 VALUES (4, 1), (5, 2), (6, 3), (7, 4), (8, 5);
+
+GRANT all privileges ON web_elective_db.* to web_admin@localhost identified by 'WEB_ADMIN-2020@electivesystem';
+
+FLUSH privileges;

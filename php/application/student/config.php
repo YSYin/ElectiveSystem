@@ -24,7 +24,7 @@ return [
         // cookie 保存时间
         'expire'    => 0,
         // cookie 保存路径
-        'path'      => '/php/public/index.php/student',
+        'path'      => '/index.php/student',
         // cookie 有效域名
         'domain'    => '',
         //  cookie 启用安全传输

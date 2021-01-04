@@ -68,15 +68,9 @@ class Elective extends Base {
      * @return 是否成功
      */
     public function doSimpleElective() {
-        $this->getElectiveTime();
-        $now = time();
-        if ($now < Elective::$start_time) 
-          return json(['status' => -1, 'msg' => '选课还未开始！']);
-        if ($now >= Elective::$end_time) 
-          return json(['status' => -1, 'msg' => '选课已经结束！']);
+        
         if (request()->isPost()) {
         	$user_id = Session::get("user_id");
-          $user_id = 1;
         	$course_str = input("post.courses");
           $courses = explode('.', $course_str);
           error_log($course_str."\r\n",3,'E:\phpstudy_pro\errors.log');
@@ -107,8 +101,11 @@ class Elective extends Base {
           return json(['status' => -1, 'msg' => '选课已经结束！']);
         
         if (request()->isPost()) {
+            $captcha = input("post.captcha");
+            if(!$captcha || !captcha_check($captcha)){
+                return json(['status'=>-1,'msg'=>'验证码错误']);
+            };
         	$user_id = Session::get("user_id");
-          $user_id = 1;
         	$course_str = input("post.courses");
           $courses = explode('.', $course_str);
           $redis = new \Redis();

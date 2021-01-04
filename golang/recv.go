@@ -20,38 +20,12 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func saveApplicationStatus(db *sql.DB, status int, message string, user_names []string) {
-	log.Println(message)
-	stmt_q, err := db.Prepare("SELECT application_success FROM student_application_status WHERE user_name = ?")
-	failOnError(err, "Failed to Prepare sql")
-	stmt_i, err := db.Prepare("INSERT INTO student_application_status (user_name, application_success, message) VALUES (?, ?, ?)")
-	failOnError(err, "Failed to Prepare sql")
-	stmt_u, err := db.Prepare("UPDATE student_application_status SET application_success = ?, message = ? WHERE user_name = ?")
-	failOnError(err, "Failed to use sql")
 
-	for _, user_name := range user_names {
-		var application_success int
-		err = stmt_q.QueryRow(user_name).Scan(&application_success)
-		if err != nil {
-        	if err == sql.ErrNoRows {
-            	_, err_i := stmt_i.Exec(user_name, status, message)
-            	failOnError(err_i, "Failed to insert into student_application_status")
-        	} else {
-        		failOnError(err, "Failed to query from student_application_status")
-        	}
-    	} else {
-    		if application_success == 0 {
-    			_, err_i := stmt_u.Exec(status, message, user_name)
-            	failOnError(err_i, "Failed to insert into student_application_status")
-    		}
-    	}
-	}
-}
 func processApplication(election CourseElection) {
 	student_id := election.StudentID
 	course_ids := election.CourseIDs
 
-	db, err := sql.Open("mysql", "web_admin:WEB_ADMIN2020@/web_elective_db?charset=utf8")
+	db, err := sql.Open("mysql", "web_admin:WEB_ADMIN-2020@electivesystem@/web_elective_db?charset=utf8")
 	failOnError(err, "Failed to Open database")
 
 	stmt1, err := db.Prepare("SELECT course_id FROM student_course WHERE student_id = ? AND course_id = ?")
@@ -110,12 +84,11 @@ func processApplication(election CourseElection) {
 		message = fmt.Sprintf("选课成功！学生ID:%s已选到课程ID:%s", student_id, course_id)
 		log.Println(message)
 	}
-	//saveApplicationStatus(db, 1, message, user_names)
 	db.Close()
 }
 
 func recvFromQueue() {
-	conn, err := amqp.Dial("amqp://root:Web-2020@localhost:5672/")
+	conn, err := amqp.Dial("amqp://web_admin:WEB_ADMIN-2020@electivesystem@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 

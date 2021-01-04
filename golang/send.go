@@ -22,7 +22,7 @@ func failOnError(err error, msg string) {
 }
 
 func sendToQueue(election_json []byte) {
-	conn, err := amqp.Dial("amqp://root:Web-2020@localhost:5672/")
+	conn, err := amqp.Dial("amqp://web_admin:WEB_ADMIN-2020@electivesystem@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 

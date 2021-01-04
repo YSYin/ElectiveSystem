@@ -1,9 +1,9 @@
             <!-- 右侧内容框架，更改从这里开始 -->
-            <blockquote class="layui-elem-quote">
+            <blockquote class="layui-elem-quote" id="tip">
                 距离选课开始还有&nbsp;<strong id="d" style="color: red">-</strong>&nbsp;天&nbsp;<strong id="h" style="color: red">-</strong>&nbsp;时&nbsp;<strong id="m" style="color: red">-</strong>&nbsp;分&nbsp;<strong id="s" style="color: red">-</strong>&nbsp;秒
             </blockquote>
             <xblock>
-                <button class="layui-btn" onclick="submitCourse()" lay-filter="sreach" disabled="true" id="submit">
+                <button class="layui-btn" onclick="submitCourse()" lay-filter="sreach" id="submit">
                     <i class="layui-icon">&#xe616;</i>提交
                 </button>
                 <button class="layui-btn" onclick="search()" lay-filter="sreach">
@@ -12,6 +12,11 @@
                 <div class="layui-input-inline">
                     <input type="text" name="username"  placeholder="请输入课程编号或名称" autocomplete="off" class="layui-input" id="search_text">
                 </div>
+                <div class="layui-input-inline">
+                    <input type="text" id="captcha" lay-verify="required" placeholder="请输入验证码" required="" autocomplete="off" class="layui-input">
+                </div>
+                <img src="{:captcha_src()}" class="verify" onclick="this.src = this.src + '?' + Math.random();" alt="验证码" />
+
                 <span class="x-right" style="line-height:40px">共有数据：<strong id="data_num">{$data_num}</strong>&nbsp;&nbsp;条&nbsp;&nbsp;</span>
             </xblock>
             <table class="layui-table" id="tablelist">

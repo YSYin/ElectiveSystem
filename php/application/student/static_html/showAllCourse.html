@@ -17,13 +17,13 @@
 <body>
 <!-- 顶部开始 -->
 <div class="container">
-    <div class="logo"><a href="/php/public/index.php/admin/admin/index.html">选课系统</a></div>
+    <div class="logo"><a href="/php/public/index.php/student/elective/index.html">选课系统</a></div>
     <div class="open-nav"><i class="iconfont">&#xe699;</i></div>
     <ul class="layui-nav right" lay-filter="">
         <li class="layui-nav-item">
             <a href="javascript:;">2001210100</a>
             <dl class="layui-nav-child"> <!-- 二级菜单 -->
-                <dd><a href="/php/public/index.php/admin/login/logout.html">退出</a></dd>
+                <dd><a href="/php/public/index.php/student/login/logout.html">退出</a></dd>
             </dl>
         </li>
     </ul>
@@ -64,11 +64,11 @@
     <div class="page-content">
         <div class="content">
                         <!-- 右侧内容框架，更改从这里开始 -->
-            <blockquote class="layui-elem-quote">
+            <blockquote class="layui-elem-quote" id="tip">
                 距离选课开始还有&nbsp;<strong id="d" style="color: red">-</strong>&nbsp;天&nbsp;<strong id="h" style="color: red">-</strong>&nbsp;时&nbsp;<strong id="m" style="color: red">-</strong>&nbsp;分&nbsp;<strong id="s" style="color: red">-</strong>&nbsp;秒
             </blockquote>
             <xblock>
-                <button class="layui-btn" onclick="submitCourse()" lay-filter="sreach" disabled="true" id="submit">
+                <button class="layui-btn" onclick="submitCourse()" lay-filter="sreach" id="submit">
                     <i class="layui-icon">&#xe616;</i>提交
                 </button>
                 <button class="layui-btn" onclick="search()" lay-filter="sreach">
@@ -77,6 +77,11 @@
                 <div class="layui-input-inline">
                     <input type="text" name="username"  placeholder="请输入课程编号或名称" autocomplete="off" class="layui-input" id="search_text">
                 </div>
+                <div class="layui-input-inline">
+                    <input type="text" id="captcha" lay-verify="required" placeholder="请输入验证码" required="" autocomplete="off" class="layui-input">
+                </div>
+                <img src="/php/public/index.php/captcha.html" class="verify" onclick="this.src = this.src + '?' + Math.random();" alt="验证码" />
+
                 <span class="x-right" style="line-height:40px">共有数据：<strong id="data_num">5</strong>&nbsp;&nbsp;条&nbsp;&nbsp;</span>
             </xblock>
             <table class="layui-table" id="tablelist">
@@ -183,7 +188,7 @@
                             <input name="checkbox" type="checkbox" value="5">
                         </td>
                         <td>4853210375</td>
-                        <td>神奇动物保护课</td>
+                        <td>神奇动物课</td>
                         <td>2</td>
                         <td>48</td>
                         <td>20</td>
@@ -295,10 +300,17 @@
                 layer.msg("您未选择课程", {icon:2,time:2000});
                 return;
             }
+            var captcha = document.getElementById("captcha").value;
+            if (captcha == null || captcha == "")
+            {
+                layer.msg("验证码为空！", {icon:2,time:1000});
+                return;
+            }
             $.ajax({
                 url:"doElective",
                 data: {
                     'courses': courses.join('.'),
+                    'captcha':captcha,
                     'submit':true
                 },
                 type:"Post",
@@ -318,7 +330,6 @@
                     return false;
                 }
             });
-
         }
         
         $(document).ready(function countDown() {
@@ -330,7 +341,14 @@
                         alert('选课已经结束！');
                         return;
                     }
-                    if (now >= start) return;
+                    
+                    if (now >= start) {
+                        var newDate = new Date();
+                        newDate.setTime(end * 1000);
+                        var str = newDate.toLocaleString();
+                        document.getElementById("tip").innerHTML="<strong>选课已经开始，截止时间为"+str+"</strong>";
+                        return;
+                    }
                     var leftTime = start - now - 1;
                     var ele = document.getElementById("submit");
                     ele.disabled=true;
@@ -353,9 +371,6 @@
                         }
                     }
                     timer = setInterval(CountDown, 1000);   
-                    console.log(start);
-                    console.log(end);
-                    console.log(now);
                 })
         });
     </script>

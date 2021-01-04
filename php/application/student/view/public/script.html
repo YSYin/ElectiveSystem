@@ -83,10 +83,17 @@
                 layer.msg("您未选择课程", {icon:2,time:2000});
                 return;
             }
+            var captcha = document.getElementById("captcha").value;
+            if (captcha == null || captcha == "")
+            {
+                layer.msg("验证码为空！", {icon:2,time:1000});
+                return;
+            }
             $.ajax({
                 url:"doElective",
                 data: {
                     'courses': courses.join('.'),
+                    'captcha':captcha,
                     'submit':true
                 },
                 type:"Post",
@@ -106,7 +113,6 @@
                     return false;
                 }
             });
-
         }
         
         $(document).ready(function countDown() {
@@ -118,7 +124,14 @@
                         alert('选课已经结束！');
                         return;
                     }
-                    if (now >= start) return;
+                    
+                    if (now >= start) {
+                        var newDate = new Date();
+                        newDate.setTime(end * 1000);
+                        var str = newDate.toLocaleString();
+                        document.getElementById("tip").innerHTML="<strong>选课已经开始，截止时间为"+str+"</strong>";
+                        return;
+                    }
                     var leftTime = start - now - 1;
                     var ele = document.getElementById("submit");
                     ele.disabled=true;
@@ -141,9 +154,6 @@
                         }
                     }
                     timer = setInterval(CountDown, 1000);   
-                    console.log(start);
-                    console.log(end);
-                    console.log(now);
                 })
         });
     </script>

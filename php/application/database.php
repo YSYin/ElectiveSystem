@@ -19,7 +19,7 @@ return [
     // 用户名
     'username'        => 'web_admin',
     // 密码
-    'password'        => 'WEB_ADMIN2020',
+    'password'        => 'WEB_ADMIN-2020@electivesystem',
     // 端口
     'hostport'        => '',
     // 连接dsn
