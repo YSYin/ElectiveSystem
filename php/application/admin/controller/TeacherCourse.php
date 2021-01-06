@@ -2,7 +2,7 @@
 
 /**
 * 教师控制器 TeacherCourse
-* 主要负责教务查看、修改教师开设的课程
+* 主要负责教务查看、修改教师开设的课程，同时提供教师查看管理个人开设课程的接口
 * @file      TeacherCourse.php
 * @date      2020/12/27
 * @author    YSY
@@ -17,7 +17,7 @@ use think\Session;
 class TeacherCourse extends Base {
 
     /**
-     * 查询并返回教师用户列表，并提供相应的操作接口
+     * 查询并返回教师用户列表
      */
     public function index() {
         $sql = "SELECT u.user_id, u.user_name, u.real_name, u.gender, "
@@ -45,7 +45,6 @@ class TeacherCourse extends Base {
               ."ON c.course_id = tc.course_id\n"
               ."WHERE tc.teacher_id = {$user_id}\n";
         $list = Db::query($sql);
-        
         $this->assign("list", $list);
         $this->assign("data_num", count($list));
         $this->assign("real_name", $real_name);
@@ -54,12 +53,22 @@ class TeacherCourse extends Base {
     }
 
     /**
-     * 添加课程
+     * 为当前教师添加课程
      * @return 是否成功
      */
     public function addTeacherCourse() {
         $user_id = (int)input("get.user_id");
         $real_name = input('get.real_name');
+        $exist = Base::checkUserAndRole('', 'Teacher', $user_id);
+        if ($exist == -1) {
+            Base::addLog(3, "教师ID不存在");
+            Base::logout();
+            return "<script>alert('非法操作！');window.history.go(-1);</script>";
+        } else if ($exist == -2) {
+            Base::addLog(3, "该用户账号不是教师账号");
+            Base::logout();
+            return "<script>alert('非法操作！');window.history.go(-1);</script>";
+        }
         if (isset($_POST["submit"])) {
             $data = array();
             $data['course_code'] = input('post.course_code');
@@ -70,7 +79,6 @@ class TeacherCourse extends Base {
             $data['course_time'] = input('post.course_time');
             $data['course_room'] = input('post.course_room');
             $data['course_info'] = input('post.course_info');
-
             $res = Base::checkValidate('course_info', $data, 2);
             if ($res['status'] == -1) {
                 $err = $res['msg'];
@@ -168,31 +176,55 @@ class TeacherCourse extends Base {
     }
 
     /**
-     * 查询并返回选择用户个人开设课程的所有学生，并提供其个人信息接口
+     * 查询并返回选择用户个人开设课程的所有学生
      */
-    public function showSelfStudent() {
+    public function showSelfAllStudent() {
         $user_id = (int)Session::get("user_id");
         $real_name = Session::get("real_name");
+        $sql = "SELECT u.user_id, u.user_name, u.real_name, u.gender,u.grade, u.email, c.course_name\n"
+                  ."FROM student_course sc INNER JOIN teacher_course tc\n"
+                  ."ON sc.course_id = tc.course_id\n"
+                  ."INNER JOIN student_user u\n"
+                  ."ON sc.student_id = u.user_id\n"
+                  ."INNER JOIN course c\n"
+                  ."ON sc.course_id = c.course_id\n"
+                  ."WHERE tc.teacher_id = {$user_id}\n";
+        $list = Db::query($sql);
+        $this->assign("list", $list);
+        $this->assign("data_num", count($list));
+        $this->assign("real_name", $real_name);
+        return $this->fetch();
+    }
+
+    /**
+     * 查询并返回选择用户个人开设特定课程的学生
+     */
+    public function showSelfCourseStudent() {
+        $this->view->engine->layout("window");
         if (isset($_GET['course_code'])) {
+            $user_id = (int)Session::get("user_id");
+            $real_name = Session::get("real_name");
             $course_code = input('get.course_code');
             $res = Base::checkValidate('course_code', ['course_code' => $course_code], 3);
             if ($res['status'] == -1) {
                 Base::logout();
                 return "<script>alert('非法操作！');window.history.go(-1);</script>";
             }
-            $course_id = Db::name('course')->where('course_code', $course_code)->value('course_id');
-            if (!$course_id) {
+            $info = Db::name('course')->field('course_name, course_id')->where('course_code', $course_code)->find();
+            if (!$info) {
                 Base::addLog(3, '课程号不存在');
                 Base::logout();
                 return "<script>alert('非法操作！');window.history.go(-1);</script>";
             }
+            $course_id = $info['course_id'];
+            $course_name = $info['course_name'];
             $exist = Db::name('teacher_course')->where(['teacher_id' => $user_id, 'course_id' => $course_id])->find();
             if (!$exist) {
                 Base::addLog(3, '用户查看非个人课程信息');
                 Base::logout();
                 return "<script>alert('非法操作！');window.history.go(-1);</script>";
             }
-            $sql = "SELECT u.user_id, u.user_name, u.real_name, c.course_name\n"
+            $sql = "SELECT u.user_id, u.user_name, u.real_name, u.grade, u.gender, u.email\n"
                   ."FROM student_course sc INNER JOIN teacher_course tc\n"
                   ."ON sc.course_id = tc.course_id\n"
                   ."INNER JOIN student_user u\n"
@@ -201,32 +233,15 @@ class TeacherCourse extends Base {
                   ."ON sc.course_id = c.course_id\n"
                   ."WHERE tc.teacher_id = {$user_id} AND c.course_code = '{$course_code}'\n";
             $list = Db::query($sql);
+            $this->assign("list", $list);
+            $this->assign("data_num", count($list));
+            $this->assign("real_name", $real_name);
+            $this->assign("course_name", $course_name);
+            return $this->fetch();
+            
         }
         else {
-            $sql = "SELECT u.user_id, u.user_name, u.real_name, c.course_name\n"
-                  ."FROM student_course sc INNER JOIN teacher_course tc\n"
-                  ."ON sc.course_id = tc.course_id\n"
-                  ."INNER JOIN student_user u\n"
-                  ."ON sc.student_id = u.user_id\n"
-                  ."INNER JOIN course c\n"
-                  ."ON sc.course_id = c.course_id\n"
-                  ."WHERE tc.teacher_id = {$user_id}\n";
-            $list = Db::query($sql);
+            return $this->fetch();
         }
-        $this->assign("list", $list);
-        $this->assign("data_num", count($list));
-        $this->assign("real_name", $real_name);
-        return $this->fetch();
     }
-
-    /**
-     * 查询并返回选择用户个人开设课程的学生信息
-     */
-    public function showSelfStudentInfo() {
-        $user = Db::name('student_user')->field('user_name, real_name, gender, grade, email, mobile_number')->where('user_name', input('get.user_name'))->find();
-        $this->assign("user", $user);
-        $this->view->engine->layout("window");
-        return $this->fetch();
-    }
-
 }

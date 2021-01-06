@@ -1,19 +1,22 @@
             <!-- 右侧内容框架，更改从这里开始 -->
+            <blockquote class="layui-elem-quote">
+                教师：<strong>{$real_name}</strong>&nbsp;的全部学生 
+            </blockquote>
             <xblock>
-                <button class="layui-btn" onclick="member_add('添加学生','./addUser','600','500')">
-                    <i class="layui-icon">&#xe608;</i>添加学生
-                </button>
                 <button class="layui-btn" onclick="search()" lay-filter="sreach">
                     <i class="layui-icon">&#xe615;</i>查找学生
                 </button>
                 <div class="layui-input-inline">
                     <input type="text" name="username"  placeholder="请输入学生账号或姓名" autocomplete="off" class="layui-input" id="search_text">
                 </div>
-                <span class="x-right" style="line-height:40px">共有学生：<strong id="data_num">{$data_num}</strong>&nbsp;&nbsp;人&nbsp;&nbsp;</span>
+                <span class="x-right" style="line-height:40px">共有数据：<strong id="data_num">{$data_num}</strong>&nbsp;&nbsp;条&nbsp;&nbsp;</span>
             </xblock>
             <table class="layui-table" id="tablelist">
                 <thead align="center">
                     <tr>
+                        <th>
+                            ID
+                        </th>
                         <th>
                             学号
                         </th>
@@ -29,16 +32,21 @@
                         <th>
                             电子邮箱
                         </th>
+                        <th>
+                            所选课程
+                        </th>
                     </tr>
                 </thead>
                 <tbody align="center">
                     {volist name="list" id="vo"}
                     <tr>
+                        <td>{$vo.user_id}</td>
                         <td>{$vo.user_name}</td>
                         <td>{$vo.real_name}</td>
                         <td>{$vo.gender==1 ? '男' : '女'}</td>
                         <td>{$vo.grade}</td>
                         <td>{$vo.email}</td>
+                        <td>{$vo.course_name}</td>
                     </tr>
                     {/volist} 
                 </tbody>

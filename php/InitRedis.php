@@ -3,7 +3,7 @@
 /**
 * 初始化redis
 * @file      InitRedis.php
-* @date      2020/1/3
+* @date      2021/1/3
 * @author    YSY
 * @version   1.0
 */
@@ -18,11 +18,12 @@
         $redis->connect('127.0.0.1', 6379);
         $redis->flushDB();
         echo "连接MYSQL服务器，读取课程信息\n";
-        $conn = mysqli_connect('localhost', 'web_admin', 'WEB_ADMIN2020', 'web_elective_db');
+        $conn = mysqli_connect('localhost', 'web_admin', 'WEB_ADMIN-2020@electivesystem', 'web_elective_db');
         if (!$conn) 
         {
             die('数据库连接失败'.mysqli_connect_error()); 
         }
+        $conn->set_charset("utf8");
         $sql = "SELECT `course_id`, `course_name`, `course_capacity`, `course_student_num` FROM course WHERE course_status = 1";
         $result = mysqli_query($conn, $sql);
         $courses = array();

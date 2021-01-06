@@ -66,6 +66,7 @@ class Admin extends Base {
             $old_password = input("post.old_password");
             if ($new_password != $renew_password) {
                 Base::addLog(3, '两次输入的密码不相同');
+                Base::logout();
                 return json(['status'=>0,'msg'=>'您两次输入的密码不相同，请检查后重新输入']);
             }
             $md5_salt = config('md5_salt');

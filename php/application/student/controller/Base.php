@@ -2,7 +2,7 @@
 
 /**
 * 控制器基类 Base
-* 通过_initialize()方法, 检查用户是否登陆, 并记录用户操作日志
+* 通过_initialize()方法, 检查用户是否登陆
 * @file      Base.php
 * @date      2020/12/31
 * @author    YSY

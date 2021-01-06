@@ -24,7 +24,8 @@ class Login extends Controller{
      */
     public function index() {
         if (Base::checkAutoLogIn()) {
-            $this->redirect('admin/index');
+            echo "<script>alert('您已登录或存在7天免登录token，无需重新登陆');</script>>";
+            return $this->redirect('admin/index');
         }
         else {
             $this->view->engine->layout(false);
@@ -84,5 +85,4 @@ class Login extends Controller{
         echo "<script>alert('您的登录会话已注销');</script>";
         $this->redirect('login/index');
     }
-
 }

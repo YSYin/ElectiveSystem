@@ -2,7 +2,7 @@
 
 /**
 * 课程控制器 Course
-* 主要负责增删改查课程
+* 主要负责删改查课程
 * @file      Course.php
 * @date      2020/12/27
 * @author    YSY
@@ -32,23 +32,51 @@ class Course extends Base {
     }
 
     /**
+    * 检查课程号格式是否正确以及是否存在
+    */
+    public static function checkCourseCode($course_code) {
+        $res = Base::checkValidate('course_code', ['course_code' => $course_code], 3);
+        if ($res['status'] == -1) {
+            return false;
+        }
+        $exist = Db::name('course')->where('course_code', $course_code)->find();
+        if (!$exist) {
+            Base::addLog(3, '课程编号错误');
+            return false;
+        }
+        return true;
+    }
+
+    /**
+    * 检查课程ID格式是否正确以及是否存在
+    */
+    public static function checkCourseID($course_id) {
+        $res = Base::checkValidate('course_id', ['course_id' => $course_id], 3);
+        if ($res['status'] == -1) {
+            return false;
+        }
+        $exist = Db::name('course')->where('course_id', $course_id)->find();
+        if (!$exist) {
+            Base::addLog(3, '课程ID错误');
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
      * 查询并返回课程信息
      */
     public function showCourseInfo() {
         $course_code = input('get.course_code');
         $real_name = input('get.real_name');
-        $res = Base::checkValidate('course_code', ['course_code' => $course_code], 3);
-        if ($res['status'] == -1) {
+        $res = Course::checkCourseCode($course_code);
+        if (!$res) {
             Base::logout();
             return "<script>alert('非法操作！');window.history.go(-1);</script>";
         }
 
         $course = Db::name('course')->field('course_code, course_name, course_status, course_credit, course_hour, course_capacity, course_student_num, course_time, course_room, course_info')->where('course_code', $course_code)->find();
-        if (!$course) {
-            Base::addLog(3, '课程编号错误');
-            Base::logout();
-            return "<script>alert('非法操作！');window.history.go(-1);</script>";
-        }
         $this->assign("real_name", $real_name);
         $this->assign("course", $course);
         $this->view->engine->layout("window");
@@ -60,21 +88,17 @@ class Course extends Base {
      */
     public function showCourseStudent() {
         $course_id = input('get.course_id');
-        $res = Base::checkValidate('course_id', ['course_id' => $course_id], 3);
-        if ($res['status'] == -1) {
+        $res = Course::checkCourseID($course_id);
+        if (!$res) {
             Base::logout();
             return "<script>alert('非法操作！');window.history.go(-1);</script>";
         }
-        $sql = "SELECT u.user_name, u.real_name, u.grade, u.gender, u.email, u.mobile_number\n"
+        
+        $sql = "SELECT u.user_name, u.real_name, u.grade, u.gender, u.email\n"
                 ."FROM student_user u INNER JOIN student_course sc\n"
                 ."ON u.user_id = sc.student_id\n"
                 ."WHERE sc.course_id = {$course_id}\n";
         $list = Db::query($sql);
-        if (!$list) {
-            Base::addLog(3, '课程ID错误');
-            Base::logout();
-            return "<script>alert('非法操作');window.history.go(-1);</script>";
-        }
         $this->assign("list", $list);
         $this->assign("data_num", count($list));
         $this->view->engine->layout("window");
@@ -87,9 +111,8 @@ class Course extends Base {
      */
     public function editCourseInfo() {
         $course_code = input('get.course_code');
-        $exist = Db::name("course")->where('course_code', $course_code)->find();
-        if (!$exist) {
-            Base::addLog(3, '课程号不存在');
+        $res = Course::checkCourseCode($course_code);
+        if (!$res) {
             Base::logout();
             return "<script>alert('非法操作！');window.history.go(-1);</script>";
         }
@@ -130,6 +153,11 @@ class Course extends Base {
     public function changeCourseTeacher() {
         $course_id = input('get.course_id');
         $old_user_name = input('get.real_name');
+        $res = Course::checkCourseID($course_id);
+        if (!$res) {
+            Base::logout();
+            return "<script>alert('非法操作！');window.history.go(-1);</script>";
+        }
         if (isset($_POST["submit"])) {
             $data = array();
             $data['user_name'] = input('post.new_user_name');
@@ -139,19 +167,17 @@ class Course extends Base {
                 $err = $res['msg'];
                 return "<script>alert('{$err}');window.history.go(-1);</script>";
             }
-            $user_id = Db::name("admin_user")->where($data)->value('user_id');
-            if (!$user_id) {
+            $exist = Base::checkUserAndRole($data['user_name'], 'Teacher');
+            if ($exist == -1) {
                 Base::addLog(2, "新授课教师账号或名字错误");
                 return "<script>alert('新授课教师账号或名字错误');window.history.go(-1);</script>";
+            } else if ($exist == -2) {
+                Base::addLog(2, "该用户账号不是教师账号");
+                return "<script>alert('该用户账号不是教师账号');window.history.go(-1);</script>";
             }
+            
             $data = array();
             $data['course_id'] = $course_id;
-            $exist = Db::name('teacher_course')->where($data)->find();
-            if (!$exist) {
-                Base::addLog(3, "课程号错误");
-                Base::logout();
-                return "<script>alert('非法操作！');window.history.go(-1);</script>";
-            }
             $res = Db::name('teacher_course')->where($data)->update(['teacher_id' => $user_id]);
             if ($res) {
                 return $this->fetch("public/msg", ["code" => 1, "msg" => "您已成功修改课程授课教师"]);
@@ -176,15 +202,8 @@ class Course extends Base {
      */
     public function blockCourse() {
         $course_code = input('get.course_code');
-        $res = Base::checkValidate('course_code', ['course_code' => $course_code], 3);
-        if ($res['status'] == -1) {
-            Base::logout();
-            return "<script>alert('非法操作！');window.history.go(-1);</script>";
-        }
-        
-        $exist = Db::name('course')->where('course_code', $course_code)->find();
-        if (!$exist) {
-            Base::addLog(3, '课程号不存在');
+        $res = Course::checkCourseCode($course_code);
+        if (!$res) {
             Base::logout();
             return "<script>alert('非法操作！');window.history.go(-1);</script>";
         }
@@ -205,14 +224,8 @@ class Course extends Base {
      */
     public function activateCourse() {
         $course_code = input('get.course_code');
-        $res = Base::checkValidate('course_code', ['course_code' => $course_code], 3);
-        if ($res['status'] == -1) {
-            Base::logout();
-            return "<script>alert('非法操作！');window.history.go(-1);</script>";
-        }
-        $exist = Db::name('course')->where('course_code', $course_code)->find();
-        if (!$exist) {
-            Base::addLog(3, '课程号不存在');
+        $res = Course::checkCourseCode($course_code);
+        if (!$res) {
             Base::logout();
             return "<script>alert('非法操作！');window.history.go(-1);</script>";
         }
@@ -233,8 +246,8 @@ class Course extends Base {
      */
     public function deleteCourse() {
         $course_id = input('get.course_id');
-        $res = Base::checkValidate('course_id', ['course_id' => $course_id], 3);
-        if ($res['status'] == -1) {
+        $res = Course::checkCourseID($course_id);
+        if (!$res) {
             Base::logout();
             return "<script>alert('非法操作！');window.history.go(-1);</script>";
         }

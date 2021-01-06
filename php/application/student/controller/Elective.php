@@ -2,9 +2,9 @@
 
 /**
 * 选课前台控制器 Elective
-* 主要负责教务查看、分配、取消学生选课
+* 主要负责选课页面显示、选课结果查询、选课请求处理、选课时间查询
 * @file      Elective.php
-* @date      2020/12/31
+* @date      2021/1/3
 * @author    YSY
 * @version   1.0
 */
@@ -28,11 +28,18 @@ class Elective extends Base {
     }
 
     /**
-    * 设置并返回选课开始和结束时间
+    * 读取文件内容，设置并返回选课开始和结束时间
     */
     public function getElectiveTime() {
-        $electiveTimeFile = APP_PATH.DS.'student'.DS.'electiveTime.txt';
-        $str = file_get_contents($electiveTimeFile);
+        $dir = RUNTIME_PATH.DS.'time';
+        if (!file_exists($dir)){
+            mkdir($dir,0777,true);
+        }
+        $file = $dir.DS.'electiveTime';
+        $str = file_get_contents($file);
+        if (!$str || $str == "") {
+            return json(['start' => -1, 'end' => -1]);
+        }
         $arr = explode(':', $str);
         Elective::$start_time = (int)$arr[0];
         Elective::$end_time = (int)$arr[1];
@@ -40,13 +47,18 @@ class Elective extends Base {
     }
 
     /**
-     * 查询并返回学生可选的全部课程列表，并提供相应的操作接口
+     * 查询并返回学生可选的全部课程列表
      */
     public function showAllCourse() {
-        $staticHtmlFile = APP_PATH.DS.'student'.DS.'static_html'.DS.'showAllCourse.html';
+        $dir = RUNTIME_PATH.DS.'static_html';
+        if (!file_exists($dir)) {
+            mkdir($dir,0777,true);
+        }
+        $staticHtmlFile = $dir.DS.'showAllCourse.html';
         if(file_exists($staticHtmlFile) && filectime($staticHtmlFile) >= time()- 60*60*2)
             return file_get_contents($staticHtmlFile);
-      	$sql = "SELECT c.course_id, c.course_code, c.course_name, c.course_credit, c.course_capacity, c.course_hour, c.course_room, c.course_time, c.course_info, au.real_name\n"
+      	$sql = "SELECT c.course_id, c.course_code, c.course_name, c.course_credit, c.course_capacity,"
+                ." c.course_hour, c.course_room, c.course_time, c.course_info, au.real_name\n"
                 ."FROM course c LEFT JOIN teacher_course tc\n"
                 ."ON c.course_id = tc.course_id\n"
                 ."LEFT JOIN admin_user au\n"
@@ -73,12 +85,12 @@ class Elective extends Base {
         	$user_id = Session::get("user_id");
         	$course_str = input("post.courses");
           $courses = explode('.', $course_str);
-          error_log($course_str."\r\n",3,'E:\phpstudy_pro\errors.log');
         	foreach ($courses as $key => $value) {
             $course_id = (int)$value;
             $select_before = Db::name('student_course')->where(['student_id' => $user_id, 'course_id' => $course_id])->find();
             if ($select_before) continue;
             $data = Db::name("course")->field('course_capacity, course_student_num')->where('course_id', $course_id)->find();
+            if (!$data) continue;
             if ($data['course_capacity'] == $data['course_student_num']) continue;
             $res1 = Db::name("student_course")->insert(['student_id' => $user_id, 'course_id' => $course_id]);
             $res2 = Db::name("course")->where('course_id', $course_id)->setInc('course_student_num');
@@ -99,7 +111,6 @@ class Elective extends Base {
           return json(['status' => -1, 'msg' => '选课还未开始！']);
         if ($now >= Elective::$end_time) 
           return json(['status' => -1, 'msg' => '选课已经结束！']);
-        
         if (request()->isPost()) {
             $captcha = input("post.captcha");
             if(!$captcha || !captcha_check($captcha)){
@@ -111,7 +122,6 @@ class Elective extends Base {
           $redis = new \Redis();
           $redis->connect('localhost', 6379);
           $course_ids = '';
-          
         	foreach ($courses as $key => $value) {
         		  $course_id = $value;
               if ($redis->hSet('course_'.$course_id.'_elections', $user_id, '1')) {
@@ -125,9 +135,7 @@ class Elective extends Base {
               $post_data = array();
               $post_data['user_id'] = $user_id;
               $post_data["course_ids"] = rtrim($course_ids, '.');
-              error_log("发送课程ID".$course_str."到消息队列\r\n",3,'E:\phpstudy_pro\errors.log');
               $res = Base::sendPost($url, $post_data);
-              error_log("收到回复".$res."到消息队列\r\n",3,'E:\phpstudy_pro\errors.log');
               return json(['status' => 1, 'msg' => $res]);
           } else return json(['status' => -1, 'msg' => '您选择的课程人数已满或您重复选课，本次请求无效']);
         }

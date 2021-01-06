@@ -28,10 +28,13 @@ class Base extends Controller {
 
 		if (!(self::checkAutoLogIn())) {
 			$this->error("您还未登录", 'login/index');
+			return;
 		}
 
 		if (!self::checkUserAccess()) {
+			self::addLog(3, '越权操作');
 			$this->error("您没有权限进行此操作");
+			return;
 		}
 
 		self::addLog();
@@ -139,6 +142,7 @@ class Base extends Controller {
 	public static function checkUserAndRole($user_name, $role_name, $user_id=-1) {
 		if ($user_id == -1) 
 			$user_id = Db::name('admin_user')->where('user_name', $user_name)->value('user_id');
+		else $user_id = Db::name('admin_user')->where('user_id', $user_id)->value('user_id');
 		if (!$user_id) return -1;
 		$role_id = Db::name("admin_role")->where('role_name', $role_name)->value('role_id');
 		$res = Db::name('user_role')->where(['user_id' => $user_id, 'role_id' => $role_id])->find();

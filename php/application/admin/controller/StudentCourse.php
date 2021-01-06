@@ -21,7 +21,7 @@ class StudentCourse extends Base {
      * 查询并返回学生列表，并提供相应的操作接口
      */
     public function index() {
-        $list = Db::name('student_user')->field('user_id, user_name, status, real_name, gender, grade, email, mobile_number')->select();
+        $list = Db::name('student_user')->field('user_id, user_name, status, real_name, gender, grade, email')->select();
         $this->assign("list", $list);
         $this->assign("data_num", count($list));
         return $this->fetch();

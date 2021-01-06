@@ -150,6 +150,11 @@
                         } else {
                             ele.disabled=false;
                             ele.style.cursor="pointer";
+                            var newDate = new Date();
+                            newDate.setTime(end * 1000);
+                            var str = newDate.toLocaleString();
+                            document.getElementById("tip").innerHTML="<strong>选课已经开始，截止时间为"+str+"</strong>";
+                            
                             clearInterval(timer);
                         }
                     }

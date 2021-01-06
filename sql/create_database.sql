@@ -38,8 +38,8 @@ CREATE TABLE `web_elective_db`.`admin_menu`
   `parent_id` INT NOT NULL DEFAULT 0 COMMENT '父菜单ID',
   `menu_icon` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '菜单icon',
   `menu_info` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '菜单描述',
-  `controller` VARCHAR(20) DEFAULT NULL COMMENT '菜单功能对应的控制器',
-  `action` VARCHAR(20) DEFAULT NULL COMMENT '菜单功能对应的方法',
+  `controller` VARCHAR(64) DEFAULT NULL COMMENT '菜单功能对应的控制器',
+  `action` VARCHAR(64) DEFAULT NULL COMMENT '菜单功能对应的方法',
   `listorder` INT UNSIGNED NOT NULL DEFAULT 999 COMMENT '菜单列表排序键值',
   `display` TINYINT NOT NULL DEFAULT 1 COMMENT '是否显示该菜单(1:显示, 2:不显示)',
   PRIMARY KEY (`menu_id`)) ENGINE = InnoDB;
@@ -60,9 +60,9 @@ CREATE TABLE `web_elective_db`.`role_menu`
 CREATE TABLE `web_elective_db`.`admin_log` 
 ( `log_id` INT NOT NULL AUTO_INCREMENT COMMENT '记录ID',
   `log_level` TINYINT  NOT NULL DEFAULT 1 COMMENT '日志等级(1：正常操作/INFO，2：错误操作/ERROR，3：警告操作/WARNING)', 
-  `module` VARCHAR(32) NOT NULL COMMENT '访问模块名称', 
-  `controller` VARCHAR(32)  NOT NULL COMMENT '访问控制器名称', 
-  `action` VARCHAR(32)  NOT NULL COMMENT '访问方法名称', 
+  `module` VARCHAR(64) NOT NULL COMMENT '访问模块名称', 
+  `controller` VARCHAR(64)  NOT NULL COMMENT '访问控制器名称', 
+  `action` VARCHAR(64)  NOT NULL COMMENT '访问方法名称', 
   `user_id` INT  NOT NULL COMMENT '用户ID', 
   `request_method` VARCHAR(10)  NOT NULL COMMENT 'HTTP请求(GET, POST)',
   `querystring` VARCHAR(255) NOT NULL COMMENT '用户查询参数',
@@ -141,7 +141,7 @@ VALUES (1, '系统首页', 0, 'xe696', '后台系统主页', 'Admin', 'index', 0
        (2, '系统设置', 0, 'xe69e', '修改个人信息、密码', '', '', 990, 1),
        (3, '修改个人信息', 2, '', '修改个人信息', 'Admin', 'editSelfInfo', 991, 1),
        (4, '修改登录密码', 2, '', '修改密码', 'Admin', 'changeSelfPassword', 992, 1),
-       (5, '退出系统', 2, '', '退出系统', 'Login', 'logout', 994, 1),
+       (5, '注销登录', 2, '', '退出系统', 'Login', 'logout', 994, 1),
        (6, '教务用户管理', 0, 'xe699', '增删改查教务用户', 'DeanUser', 'index', 1, 1),
        (7, '增加用户', 6, '', '增加教务用户', 'DeanUser', 'addUser', 1, 2), 
        (8, '查询用户', 6, '', '查询教务用户', 'DeanUser', 'searchUser', 1, 2), 
@@ -186,10 +186,10 @@ VALUES (1, '系统首页', 0, 'xe696', '后台系统主页', 'Admin', 'index', 0
        (47, '查看学生选课结果', 46, '', '查看学生选课结果', 'StudentCourse', 'showStudentCourse', 6, 2),
        (48, '添加学生选课', 46, '', '添加学生选课', 'StudentCourse', 'addStudentCourse', 6, 2),
        (49, '取消学生选课', 46, '', '取消学生选课', 'StudentCourse', 'cancelStudentCourse', 6, 2),
-       (50, '开课管理', 0, 'xe699', '查看本人开设课程', 'TeacherCourse', 'showSelfCourse', 7, 1),
+       (50, '开设课程管理', 0, 'xe699', '查看本人开设课程', 'TeacherCourse', 'showSelfCourse', 7, 1),
        (51, '修改课程', 50, '', '修改本人开设课程信息', 'TeacherCourse', 'editSelfCourse', 7, 2),
-       (52, '学生管理', 0, 'xe699', '查看所有选课学生', 'TeacherCourse', 'showSelfStudent', 8, 1),
-       (53, '查看选课学生信息', 52, '', '查看选课学生信息', 'TeacherCourse', 'showSelfStudentInfo', 8, 2),
+       (52, '查看选课学生', 0, 'xe699', '查看所有选课学生', 'TeacherCourse', 'showSelfAllStudent', 8, 1),
+       (53, '特定课程选课学生', 52, '', '特定课程选课学生', 'TeacherCourse', 'showSelfCourseStudent', 8, 2),
        (54, '重置免登录token', 2, '', '重置个人免登录token', 'Admin', 'resetSelfToken', 993, 1);
 
 
@@ -202,13 +202,13 @@ VALUES (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (
        (1, 26), (1, 27), (1, 28), (1, 29), (1, 30), (1, 31), (1, 32), (1, 33), (1, 34), (1, 54), 
        (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 35), (2, 36), (2, 37), (2, 38), (2, 39), (2, 40),
        (2, 41), (2, 42), (2, 43), (2, 44), (2, 45), (2, 46), (2, 47), (2, 48), (2, 49), (2, 54),
-       (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 50), (3, 51), (3, 52), (3, 54); 
+       (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 50), (3, 51), (3, 52), (3, 53), (3, 54); 
 
 INSERT INTO `web_elective_db`.`student_user` (`user_id`, `user_name`, `password`, `status`, `real_name`, `gender`, `grade`, `email`, `mobile_number`)
 VALUES (1, '2001210100', MD5(CONCAT(MD5('PASS@10100'), 'web-2020')), 1, '哈利', 1, '本科一年级', 'harry@hogwarts.edu', '13131578966'),
 (2, '2001210102', MD5(CONCAT(MD5('PASS@10102'), 'web-2020')), 1, '赫敏', 2, '本科一年级', 'hermione@hogwarts.edu', '15894591510'),
 (3, '2001210103', MD5(CONCAT(MD5('PASS@10103'), 'web-2020')), 1, '罗恩', 1, '本科一年级', 'ron@hogwarts.edu', '13401526314'),
-(4, '2001210104', MD5(CONCAT(MD5('PASS@10104'), 'web-2020')), 1, '张秋', 1, '本科一年级', 'chochang@hogwarts.edu', '15196701530'),
+(4, '2001210104', MD5(CONCAT(MD5('PASS@10104'), 'web-2020')), 1, '张秋', 2, '本科一年级', 'chochang@hogwarts.edu', '15196701530'),
 (5, '1901210105', MD5(CONCAT(MD5('PASS@10105'), 'web-2020')), 1, '弗雷德', 1, '本科二年级', 'fred@hogwarts.edu', '13296701530'),
 (6, '1901210106', MD5(CONCAT(MD5('PASS@10106'), 'web-2020')), 1, '乔治', 1, '本科二年级', 'george@hogwarts.edu', '16696701530'),
 (7, '1801210107', MD5(CONCAT(MD5('PASS@10107'), 'web-2020')), 1, '塞德里克', 1, '本科三年级', 'cedric@hogwarts.edu', '18196701530'),
