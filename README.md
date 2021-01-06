@@ -41,46 +41,46 @@
 本系统全部文件存放在ElectiveSystem文件夹中，各文件的架构与功能如下所示
 
 ```markdown
-***`ElectiveSystem`*** 总目录
-├─***`php`***                      ThinkPHP框架，实现后台管理模块的全部功能和前台秒杀模块的部分功能
-│  ├─***`application`***        应用目录
-│  │  ├─***`admin`***                后台管理模块
-│  │  │  ├─***`controller`***         后台管理模块的各个控制器
-│  │  │  ├─***`model`***                后台用户表和菜单权限表的模型
-│  │  │  ├─***`view`***                   后台管理模块的视图，即每个方法对应的模板文件
-│  │  │  ├─***`validate`***             验证器，验证数据输入的格式
-│  │  │  ├─***`widget`***               左侧菜单，确定用户能访问的菜单以及菜单是否展开
-│  │  │  └─**`config.php`**       后台管理模块的配置文件，主要配置模板布局和cookie路径
-│  │  ├─***`student`***               前台秒杀模块
-│  │  │  ├─***`controller`***          前台秒杀模块的各个控制器
-│  │  │  ├─***`model`***                 学生用户表的模型
-│  │  │  ├─***`view`***                    前台秒杀模块的模板文件
-│  │  │  └─**`config.php`**        前台秒杀模块的配置文件
-│  │  └─ **...**                             应用目录的其他文件      
-│  ├─***`public`***                 WEB 部署目录（对外访问目录）
-│  │  ├─***`phpMyAdmin`***     phpMyAdmin，访问数据库
-│  │  ├─***`static`***                    静态资源存放目录(css,js,image)
+ElectiveSystem 总目录
+├─php                      ThinkPHP框架，实现后台管理模块的全部功能和前台秒杀模块的部分功能
+│  ├─application        应用目录
+│  │  ├─admin                后台管理模块
+│  │  │  ├─controller         后台管理模块的各个控制器
+│  │  │  ├─model                后台用户表和菜单权限表的模型
+│  │  │  ├─view                   后台管理模块的视图，即每个方法对应的模板文件
+│  │  │  ├─validate             验证器，验证数据输入的格式
+│  │  │  ├─widget               左侧菜单，确定用户能访问的菜单以及菜单是否展开
+│  │  │  └─config.php       后台管理模块的配置文件，主要配置模板布局和cookie路径
+│  │  ├─student               前台秒杀模块
+│  │  │  ├─controller          前台秒杀模块的各个控制器
+│  │  │  ├─model                 学生用户表的模型
+│  │  │  ├─view                    前台秒杀模块的模板文件
+│  │  │  └─config.php        前台秒杀模块的配置文件
+│  │  └─ ...                             应用目录的其他文件      
+│  ├─public                 WEB 部署目录（对外访问目录）
+│  │  ├─phpMyAdmin     phpMyAdmin，访问数据库
+│  │  ├─static                    静态资源存放目录(css,js,image)
 │  │  └─ ...                              对外访问目录的其他文件
 │  └─...                     ThinkPHP框架的其他内容
-├─***`go`***                     golang文件，接收、处理选课请求，将结果写回
-│  ├─**`send.go`**           从PHP服务器接收选课请求，进行封装后转发到消息队列
-│  └─**`recv.go`**            从消息队列中接收请求，处理请求并将结果写回数据库
-├─***`sql`***                    SQL文件，创建数据库和用户，写入初始数据
-│  └─**`create_database.sql`**    创建数据库和用户，写入初始数据
-├─**`LICENSE`**        授权说明文件
-├─**`README.md`**项目说明文件
+├─go                     golang文件，接收、处理选课请求，将结果写回
+│  ├─send.go           从PHP服务器接收选课请求，进行封装后转发到消息队列
+│  └─recv.go            从消息队列中接收请求，处理请求并将结果写回数据库
+├─sql                    SQL文件，创建数据库和用户，写入初始数据
+│  └─create_database.sql    创建数据库和用户，写入初始数据
+├─LICENSE        授权说明文件
+├─README.md项目说明文件
 ```
 
 ## 三、部署说明
 
 ### 1. 环境依赖
 
-- Apache：Apache / 2.4.6 (CentOS)
-- MySQL：MySQL / 5.7.32
-- PHP：PHP / 7.2.34
-- RabbitMQ：RabbitMQ / 3.8.5
-- Redis：Redis / 6.0.1
-- PHPRedis：PHPRedis / 5.3.2
+- Apache：**`Apache / 2.4.6 (CentOS)`**
+- MySQL：**`MySQL / 5.7.32`**
+- PHP：**`PHP / 7.2.34`**
+- RabbitMQ：**`RabbitMQ / 3.8.5`**
+- Redis：**`Redis / 6.0.1`**
+- PHPRedis：**`PHPRedis / 5.3.2`**
 
 ### 2. 部署说明
 
@@ -88,10 +88,10 @@
 2. 添加MySQL用户`web_admin:WEB_ADMIN-2020`、添加RabbitMQ用户`web_admin:WEB_ADMIN-2020`
 3. 下载项目文件到本地
 4. 设置Web根目录为`ElectiveSystem/php/public`
-5. 选课开始前，在`ElectiveSystem/php`下通过php命令运行`InitRedis.php`文件
+5. 选课开始前，在`ElectiveSystem/php`下通过`php`命令运行`InitRedis.php`文件
 6. 选课开始前，编译并运行`ElectiveSystem/go`下的`recvFromPHP.go`和`processElection.go`文件
-7. 通过http://yourhost/index.php/admin/login/index 即可登录管理后台
-8. 通过http://yourhost/index.php/student/login/index 即可登录选课前台
+7. 通过http://yourhostname/index.php/admin/login/index 即可登录管理后台
+8. 通过http://yourhostname/index.php/student/login/index 即可登录选课前台
 
 ## 四、协议
 
