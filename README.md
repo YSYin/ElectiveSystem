@@ -40,6 +40,7 @@
 
 本系统全部文件存放在ElectiveSystem文件夹中，各文件的架构与功能如下所示
 
+```markdown
 ***`ElectiveSystem`*** 总目录
 ├─***`php`***                      ThinkPHP框架，实现后台管理模块的全部功能和前台秒杀模块的部分功能
 │  ├─***`application`***        应用目录
@@ -68,6 +69,7 @@
 │  └─**`create_database.sql`**    创建数据库和用户，写入初始数据
 ├─**`LICENSE`**        授权说明文件
 ├─**`README.md`**项目说明文件
+```
 
 ## 三、部署说明
 
@@ -88,8 +90,8 @@
 4. 设置Web根目录为`ElectiveSystem/php/public`
 5. 选课开始前，在`ElectiveSystem/php`下通过php命令运行`InitRedis.php`文件
 6. 选课开始前，编译并运行`ElectiveSystem/go`下的`recvFromPHP.go`和`processElection.go`文件
-7. 通过http://yourhost/index.php/admin/login/index即可登录管理后台
-8. 通过http://yourhost/index.php/student/login/index即可登录选课前台
+7. 通过http://yourhost/index.php/admin/login/index 即可登录管理后台
+8. 通过http://yourhost/index.php/student/login/index 即可登录选课前台
 
 ## 四、协议
 
