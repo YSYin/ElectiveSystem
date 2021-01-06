@@ -18,7 +18,7 @@
         $redis->connect('127.0.0.1', 6379);
         $redis->flushDB();
         echo "连接MYSQL服务器，读取课程信息\n";
-        $conn = mysqli_connect('localhost', 'web_admin', 'WEB_ADMIN-2020@electivesystem', 'web_elective_db');
+        $conn = mysqli_connect('localhost', 'web_admin', 'WEB_ADMIN-2020', 'web_elective_db');
         if (!$conn) 
         {
             die('数据库连接失败'.mysqli_connect_error()); 

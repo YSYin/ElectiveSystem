@@ -226,6 +226,6 @@ VALUES (1, '4853210254', '飞行', 3, 48, 20, 0, '周三下午', '室外', '学�
 INSERT INTO `web_elective_db`.`teacher_course` (`teacher_id`, `course_id`)
 VALUES (4, 1), (5, 2), (6, 3), (7, 4), (8, 5);
 
-GRANT all privileges ON web_elective_db.* to web_admin@localhost identified by 'WEB_ADMIN-2020@electivesystem';
+GRANT all privileges ON web_elective_db.* to web_admin@localhost identified by 'WEB_ADMIN-2020';
 
 FLUSH privileges;
